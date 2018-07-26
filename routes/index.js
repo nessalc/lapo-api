@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var fetch = require('node-fetch');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -52,6 +53,58 @@ router.get('/hours', function(req, res, next) {
 			break;
 	}
 	res.json(response);
+})
+
+router.get('/planets', function(req, res, next) {
+	let url = 'http://www.astropical.space/astrodb/api-ephem.php?lat=37&lon=-97';
+
+	fetch(url)
+	.then(response => response.json())
+	.then(data => {
+		// now we have the data
+		let planets = data.response
+
+		let visiblePlanets = []
+
+		planets.forEach(function(planet) {
+			if (planet.alt > 0) {
+
+				let brightness = ''
+
+				if (planet.mag < -3) {
+					brightness = 'extremely bright'
+				} else if (planet.mag >= -3 && planet.mag < 0) {
+					brightness = 'very bright'
+				} else if (planet.mag >= 0 && planet.mag < 1) {
+					brightness = 'bright'
+				} else if (planet.mag >= 1 && planet.mag < 2) {
+					brightness = 'average'
+				} else if (planet.mag >= 2 && planet.mag < 6.5) {
+					brightness = 'dim'
+				} else {
+					brightness = 'not visible to naked eye'
+				}
+
+				let prettyPlanetStruct = {
+					name:planet.name,
+					altitudeDegrees:planet.alt,
+					distanceFromEarthAU:planet.au_earth,
+					magnitude:planet.mag,
+					brightness:brightness,
+					constellation:planet.const
+				}
+
+				visiblePlanets.push(prettyPlanetStruct)
+			}
+		})
+
+		res.json(visiblePlanets)
+	})
+	.catch(err => {
+		console.log(err)
+		res.json(err)
+	})
+
 })
 
 module.exports = router;
