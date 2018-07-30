@@ -56,8 +56,8 @@ router.get('/hours', function(req, res, next) {
 })
 
 router.get('/planets', function(req, res, next) {
-	let lat = '37.62218579135644';
-	let lon = '-97.62695789337158';
+	let lat = 37.62218579135644;
+	let lon = -97.62695789337158;
 	let url = 'http://www.astropical.space/astrodb/api-ephem.php?lat='+lat+'&lon='+lon;
 
 	fetch(url)
