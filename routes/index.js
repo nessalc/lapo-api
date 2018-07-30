@@ -171,20 +171,20 @@ router.get('/moon', function(req, res, next) {
 		response.moon.phase = "New Moon";
 	} else if (illum.phase < (0.25 - lazy)) {
 		response.moon.phase = "Waxing Crescent";
-	} else if ((illum.phase >= (0.25 - lazy)) && (illum.phase <= (0.25 + lazy))){
+	} else if ((illum.phase >= (0.25 - lazy)) && (illum.phase <= (0.25 + lazy))) {
 		response.moon.phase = "First Quarter";
 	} else if (illum.phase < (0.5 - lazy)) {
 		response.moon.phase = "Waxing Gibbous";
-	} else if ((illum.phase >= (0.5 - lazy)) && (illum.phase <= (0.5 + lazy))){
+	} else if ((illum.phase >= (0.5 - lazy)) && (illum.phase <= (0.5 + lazy))) {
 		response.moon.phase = "Full Moon";
 	} else if (illum.phase < (0.75 - lazy)) {
 		response.moon.phase = "Waning Gibbous";
-	} else if ((illum.phase >= (0.75 - lazy)) && (illumphase <= (0.75 + lazy))){
+	} else if ((illum.phase >= (0.75 - lazy)) && (illumphase <= (0.75 + lazy))) {
 		response.moon.phase = "Last Quarter";
 	} else if (illum.phase < (1 - lazy)) {
 		response.moon.phase = "Waning Crescent";
 	} else {
-		response.moon.phase = "Green Cheese?"
+		response.moon.phase = "Green Cheese?";
 	}
 	res.json(response);
 })
