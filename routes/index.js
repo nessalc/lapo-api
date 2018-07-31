@@ -116,9 +116,14 @@ router.get('/sun', function(req, res, next) {
 	let lon = -97.62695789337158;
 	let response = {
 		times:{
+			sunrise:'',
+			solar_noon:'',
 			sunset:'',
-			astro_twilight:'',
-			astro_dusk:''
+			astro_twilight_start:'',
+			night_start:'',
+			nadir:'',
+			night_end:'',
+			astro_twilight_end:'',
 		}
 	};
 	let times = suncalc.getTimes(currentTime, lat, lon);
@@ -132,9 +137,14 @@ router.get('/sun', function(req, res, next) {
 		var strTime = hours + ':' + minutes + ' ' + ampm;
 		return strTime;
 	}
+	response.times.sunrise = formatTime(times.sunrise);
+	response.times.solar_noon = formatTime(times.solarNoon);
 	response.times.sunset = formatTime(times.sunset);
-	response.times.astro_twilight = formatTime(times.nauticalDusk);
-	response.times.astro_dusk = formatTime(times.night);
+	response.times.astro_twilight_start = formatTime(times.nauticalDusk);
+	response.times.night_start = formatTime(times.night);
+	response.times.nadir = formatTime(times.nadir);
+	response.times.night_end = formatTime(times.nightEnd);
+	response.times.astro_twilight_end = formatTime(times.nauticalDawn);
 	res.json(response);
 })
 
