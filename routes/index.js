@@ -116,14 +116,14 @@ router.get('/sun', function(req, res, next) {
 	let lon = -97.62695789337158;
 	let response = {
 		times:{
+			nadir:'',
+			night_end:'',
+			astro_twilight_end:'',
 			sunrise:'',
 			solar_noon:'',
 			sunset:'',
 			astro_twilight_start:'',
 			night_start:'',
-			nadir:'',
-			night_end:'',
-			astro_twilight_end:'',
 		}
 	};
 	let times = suncalc.getTimes(currentTime, lat, lon);
@@ -137,14 +137,17 @@ router.get('/sun', function(req, res, next) {
 		var strTime = hours + ':' + minutes + ' ' + ampm;
 		return strTime;
 	}
+	/* Populate JSON construct */
+	/* Future: check if current time is later than displayed time; update
+	   to next day's time if this is the case */
+	response.times.nadir = formatTime(times.nadir);
+	response.times.night_end = formatTime(times.nightEnd);
+	response.times.astro_twilight_end = formatTime(times.nauticalDawn);
 	response.times.sunrise = formatTime(times.sunrise);
 	response.times.solar_noon = formatTime(times.solarNoon);
 	response.times.sunset = formatTime(times.sunset);
 	response.times.astro_twilight_start = formatTime(times.nauticalDusk);
 	response.times.night_start = formatTime(times.night);
-	response.times.nadir = formatTime(times.nadir);
-	response.times.night_end = formatTime(times.nightEnd);
-	response.times.astro_twilight_end = formatTime(times.nauticalDawn);
 	res.json(response);
 })
 
@@ -173,6 +176,9 @@ router.get('/moon', function(req, res, next) {
 		var strTime = hours + ':' + minutes + ' ' + ampm;
 		return strTime;
 	}
+	/* Populate JSON construct */
+	/* Future: check if current time is later than displayed time; update
+	   to next day's time if this is the case */
 	response.moon.moonrise = formatTime(times.rise);
 	response.moon.moonset = formatTime(times.set);
 	response.moon.illumination = (illum.fraction * 100).toPrecision(4) + ' %'; //percent illumnation
