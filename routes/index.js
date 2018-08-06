@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var fetch = require('node-fetch');
+var suncalc = require('suncalc');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -107,6 +108,101 @@ router.get('/planets', function(req, res, next) {
 		res.json(err)
 	})
 
+})
+
+router.get('/sun', function(req, res, next) {
+	let currentTime = new Date()
+	let lat = 37.62218579135644;
+	let lon = -97.62695789337158;
+	let response = {
+		times:{
+			nadir:'',
+			night_end:'',
+			astro_twilight_end:'',
+			sunrise:'',
+			solar_noon:'',
+			sunset:'',
+			astro_twilight_start:'',
+			night_start:'',
+		}
+	};
+	let times = suncalc.getTimes(currentTime, lat, lon);
+	function formatTime(date) {
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+		var ampm = hours >= 12 ? 'pm' : 'am';
+		hours %= 12;
+		hours = hours ? hours : 12;
+		minutes = minutes < 10 ? '0' + minutes : minutes;
+		var strTime = hours + ':' + minutes + ' ' + ampm;
+		return strTime;
+	}
+	/* Populate JSON construct */
+	/* Future: check if current time is later than displayed time; update
+	   to next day's time if this is the case */
+	response.times.nadir = formatTime(times.nadir);
+	response.times.night_end = formatTime(times.nightEnd);
+	response.times.astro_twilight_end = formatTime(times.nauticalDawn);
+	response.times.sunrise = formatTime(times.sunrise);
+	response.times.solar_noon = formatTime(times.solarNoon);
+	response.times.sunset = formatTime(times.sunset);
+	response.times.astro_twilight_start = formatTime(times.nauticalDusk);
+	response.times.night_start = formatTime(times.night);
+	res.json(response);
+})
+
+router.get('/moon', function(req, res, next) {
+	let currentTime = new Date()
+	let lat = 37.62218579135644;
+	let lon = -97.62695789337158;
+	let lazy = 0.03;
+	let response = {
+		moon:{
+			moonrise:'',
+			phase:'',
+			moonset:'',
+			illumination:0
+		}
+	};
+	let times = suncalc.getMoonTimes(currentTime,lat,lon);
+	let illum = suncalc.getMoonIllumination(currentTime);
+	function formatTime(date) {
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+		var ampm = hours >= 12 ? 'pm' : 'am';
+		hours %= 12;
+		hours = hours ? hours : 12;
+		minutes = minutes < 10 ? '0' + minutes : minutes;
+		var strTime = hours + ':' + minutes + ' ' + ampm;
+		return strTime;
+	}
+	/* Populate JSON construct */
+	/* Future: check if current time is later than displayed time; update
+	   to next day's time if this is the case */
+	response.moon.moonrise = formatTime(times.rise);
+	response.moon.moonset = formatTime(times.set);
+	response.moon.illumination = (illum.fraction * 100).toPrecision(4) + ' %'; //percent illumnation
+	//get phase in common terms
+	if ((illum.phase >= (1 - lazy)) || (illum.phase <= (0 + lazy))) {
+		response.moon.phase = "New Moon";
+	} else if (illum.phase < (0.25 - lazy)) {
+		response.moon.phase = "Waxing Crescent";
+	} else if ((illum.phase >= (0.25 - lazy)) && (illum.phase <= (0.25 + lazy))) {
+		response.moon.phase = "First Quarter";
+	} else if (illum.phase < (0.5 - lazy)) {
+		response.moon.phase = "Waxing Gibbous";
+	} else if ((illum.phase >= (0.5 - lazy)) && (illum.phase <= (0.5 + lazy))) {
+		response.moon.phase = "Full Moon";
+	} else if (illum.phase < (0.75 - lazy)) {
+		response.moon.phase = "Waning Gibbous";
+	} else if ((illum.phase >= (0.75 - lazy)) && (illumphase <= (0.75 + lazy))) {
+		response.moon.phase = "Last Quarter";
+	} else if (illum.phase < (1 - lazy)) {
+		response.moon.phase = "Waning Crescent";
+	} else {
+		response.moon.phase = "Green Cheese?";
+	}
+	res.json(response);
 })
 
 module.exports = router;

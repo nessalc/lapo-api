@@ -22,3 +22,5 @@ If you have any questions, you can reach out at sduncan@lakeafton.com
 * GET `/` -- returns a basic welcome message
 * GET `/hours` -- returns current hours of operation
 * GET `/planets` -- returns planets that are visible right now
+* GET `/sun` -- returns sunrise, sunset, twilight, and dusk information
+* GET `/moon` -- returns moonrise, moonset, and phase of the moon
