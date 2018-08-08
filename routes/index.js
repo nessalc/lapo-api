@@ -56,57 +56,52 @@ router.get('/hours', function(req, res, next) {
 	res.json(response);
 })
 
-router.get('/planets', function(req, res, next) {
+router.get('/planets', async function(req, res, next) {
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
 	let url = 'http://www.astropical.space/astrodb/api-ephem.php?lat='+lat+'&lon='+lon;
 
-	fetch(url)
-	.then(response => response.json())
-	.then(data => {
-		// now we have the data
-		let planets = data.response
+	let response = await fetch(url);
+	let data = await response.json();
 
-		let visiblePlanets = []
+	// now we have the data
+	let planets = data.response
 
-		planets.forEach(function(planet) {
-			if (planet.alt > 0) {
+	let visiblePlanets = []
 
-				let brightness = ''
+	planets.forEach(function(planet) {
+		if (planet.alt > 0) {
 
-				if (planet.mag < -3) {
-					brightness = 'extremely bright'
-				} else if (planet.mag >= -3 && planet.mag < 0) {
-					brightness = 'very bright'
-				} else if (planet.mag >= 0 && planet.mag < 1) {
-					brightness = 'bright'
-				} else if (planet.mag >= 1 && planet.mag < 2) {
-					brightness = 'average'
-				} else if (planet.mag >= 2 && planet.mag < 6.5) {
-					brightness = 'dim'
-				} else {
-					brightness = 'not visible to naked eye'
-				}
+			let brightness = ''
 
-				let prettyPlanetStruct = {
-					name:planet.name,
-					altitudeDegrees:planet.alt,
-					distanceFromEarthAU:planet.au_earth,
-					magnitude:planet.mag,
-					brightness:brightness,
-					constellation:planet.const
-				}
-
-				visiblePlanets.push(prettyPlanetStruct)
+			if (planet.mag < -3) {
+				brightness = 'extremely bright'
+			} else if (planet.mag >= -3 && planet.mag < 0) {
+				brightness = 'very bright'
+			} else if (planet.mag >= 0 && planet.mag < 1) {
+				brightness = 'bright'
+			} else if (planet.mag >= 1 && planet.mag < 2) {
+				brightness = 'average'
+			} else if (planet.mag >= 2 && planet.mag < 6.5) {
+				brightness = 'dim'
+			} else {
+				brightness = 'not visible to naked eye'
 			}
-		})
 
-		res.json(visiblePlanets)
+			let prettyPlanetStruct = {
+				name:planet.name,
+				altitudeDegrees:planet.alt,
+				distanceFromEarthAU:planet.au_earth,
+				magnitude:planet.mag,
+				brightness:brightness,
+				constellation:planet.const
+			}
+
+			visiblePlanets.push(prettyPlanetStruct)
+		}
 	})
-	.catch(err => {
-		console.log(err)
-		res.json(err)
-	})
+
+	res.json(visiblePlanets)
 
 })
 
