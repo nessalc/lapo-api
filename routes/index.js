@@ -157,12 +157,10 @@ router.get('/moon', function(req, res, next) {
 	let lon = -97.62695789337158;
 	let lazy = 0.03;
 	let response = {
-		moon:{
-			moonrise:'',
-			phase:'',
-			moonset:'',
-			illumination:0
-		}
+		moonrise:'',
+		phase:'',
+		moonset:'',
+		illumination:0
 	};
 	let times = suncalc.getMoonTimes(currentTime,lat,lon);
 	let illum = suncalc.getMoonIllumination(currentTime);
@@ -179,28 +177,28 @@ router.get('/moon', function(req, res, next) {
 	/* Populate JSON construct */
 	/* Future: check if current time is later than displayed time; update
 	   to next day's time if this is the case */
-	response.moon.moonrise = formatTime(times.rise);
-	response.moon.moonset = formatTime(times.set);
-	response.moon.illumination = (illum.fraction * 100).toPrecision(4) + ' %'; //percent illumnation
+	response.moonrise = formatTime(times.rise);
+	response.moonset = formatTime(times.set);
+	response.illumination = (illum.fraction * 100).toPrecision(4) + ' %'; //percent illumnation
 	//get phase in common terms
 	if ((illum.phase >= (1 - lazy)) || (illum.phase <= (0 + lazy))) {
-		response.moon.phase = "New Moon";
+		response.phase = "New Moon";
 	} else if (illum.phase < (0.25 - lazy)) {
-		response.moon.phase = "Waxing Crescent";
+		response.phase = "Waxing Crescent";
 	} else if ((illum.phase >= (0.25 - lazy)) && (illum.phase <= (0.25 + lazy))) {
-		response.moon.phase = "First Quarter";
+		response.phase = "First Quarter";
 	} else if (illum.phase < (0.5 - lazy)) {
-		response.moon.phase = "Waxing Gibbous";
+		response.phase = "Waxing Gibbous";
 	} else if ((illum.phase >= (0.5 - lazy)) && (illum.phase <= (0.5 + lazy))) {
-		response.moon.phase = "Full Moon";
+		response.phase = "Full Moon";
 	} else if (illum.phase < (0.75 - lazy)) {
-		response.moon.phase = "Waning Gibbous";
-	} else if ((illum.phase >= (0.75 - lazy)) && (illumphase <= (0.75 + lazy))) {
-		response.moon.phase = "Last Quarter";
+		response.phase = "Waning Gibbous";
+	} else if ((illum.phase >= (0.75 - lazy)) && (illum.phase <= (0.75 + lazy))) {
+		response.phase = "Last Quarter";
 	} else if (illum.phase < (1 - lazy)) {
-		response.moon.phase = "Waning Crescent";
+		response.phase = "Waning Crescent";
 	} else {
-		response.moon.phase = "Green Cheese?";
+		response.phase = "Green Cheese?";
 	}
 	res.json(response);
 })
