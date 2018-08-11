@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var fetch = require('node-fetch');
 var suncalc = require('suncalc');
+const https = require('https');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -196,6 +197,40 @@ router.get('/moon', function(req, res, next) {
 		response.phase = "Green Cheese?";
 	}
 	res.json(response);
+})
+
+router.get('/events', async function(req, res, next) {
+	
+	let key = 'AIzaSyDeefIJYspYQXSULfbivbzD26XCiOfIlYc';
+	let calenderId = 'lakeafton.com_qojc7kseu2jv9j7jji2gqgqud4@group.calendar.google.com';
+	let now = new Date();
+	let thirty_days_later = new Date().setDate(now.getDate()+30);
+	// convert dates to ISO strings for Google API
+	let timeMin = now.toISOString();
+	let timeMax = new Date(thirty_days_later).toISOString();
+	let orderBy = 'startTime';
+
+	let url = 'https://www.googleapis.com/calendar/v3/calendars/'+calenderId+'/events?key='+key+'&timeMin='+timeMin+'&timeMax='+timeMax+'&singleEvents=true&orderBy='+orderBy;
+	let response = await fetch(url);
+	let data = await response.json();
+
+	let events = data.items
+	let events_for_display = []
+
+	events.forEach(function(event) {
+		let startDate = new Date(event.start.dateTime).toString();
+		let endDate = new Date(event.end.dateTime).toString();
+		let eventStruct = {
+			summary:event.summary,
+			description:event.description,
+			startTime:startDate,
+			endTime:endDate,
+			location:event.location
+		}
+		events_for_display.push(eventStruct)
+	})
+	
+	res.json(events_for_display);
 })
 
 module.exports = router;
