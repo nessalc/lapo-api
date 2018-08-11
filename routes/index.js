@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var fetch = require('node-fetch');
 var suncalc = require('suncalc');
-const https = require('https');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
