@@ -21,7 +21,9 @@ If you have access to the server you can deploy the code yourself:
 2. cd /var/www/lake-afton-api/
 3. sudo git pull
 
-If you have any questions, you can reach out at sduncan@lakeafton.com
+The Express server is using PM2 to stay running in the background. Check out the docs for PM2 if you have questions about that.
+
+If you have other any questions, you can reach out at sduncan@lakeafton.com
 
 ### Endpoints
 
