@@ -15,6 +15,12 @@ You're gonna need node.js, this was written on v8.11.3
 7. Upload to your fork
 8. Submit a pull request
 
+If you have access to the server you can deploy the code yourself:
+
+1. SSH to the server and log in
+2. cd /var/www/lake-afton-api/
+3. sudo git pull
+
 If you have any questions, you can reach out at sduncan@lakeafton.com
 
 ### Endpoints
