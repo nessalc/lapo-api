@@ -199,7 +199,7 @@ router.get('/moon', function(req, res, next) {
 })
 
 router.get('/events', async function(req, res, next) {
-	
+
 	let key = 'AIzaSyDeefIJYspYQXSULfbivbzD26XCiOfIlYc';
 	let calenderId = 'lakeafton.com_qojc7kseu2jv9j7jji2gqgqud4@group.calendar.google.com';
 	let now = new Date();
@@ -228,8 +228,19 @@ router.get('/events', async function(req, res, next) {
 		}
 		events_for_display.push(eventStruct)
 	})
-	
+
 	res.json(events_for_display);
+})
+
+router.get('/schedule', function(req, res, next) {
+
+	// @TODO -- make this hit a file (probably Chris Lamer's) and get the data dynamically
+	let response = {
+		schedule:'This weekend is all about Winter Splendors. We will be viewing Mars, Neptune, the Blue Snowball, the Andromeda Galaxy, and much more.'
+	}
+
+	res.json(response);
+
 })
 
 module.exports = router;
