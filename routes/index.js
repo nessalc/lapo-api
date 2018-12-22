@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var fetch = require('node-fetch');
 var suncalc = require('suncalc');
+var moment = require('moment');
+var viewingSchedule = require('../lib/viewingSchedule')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -234,10 +236,23 @@ router.get('/events', async function(req, res, next) {
 
 router.get('/schedule', function(req, res, next) {
 
-	// @TODO -- make this hit a file (probably Chris Lamer's) and get the data dynamically
+	// get the date of the upcoming Sunday, then subtract two days to get the relevant Friday
+	// the schedules are made for "fridays" but they apply for both Friday and Saturday, so
+	// if someone requests the schedule on Saturday, we need to get the schedule that's made for "yesterday"
+	// but if they request on a Thursday, we need to get it for "tomorrow" -- so we use the next Sunday, minus two
+	// days to get that. Math'd.
+
+	// the schedule lives in /lib/viewingSchedule and is manually generated with by minions
+
+	let upcomingSunday = new Date();
+	upcomingSunday.setDate(upcomingSunday.getDate() + (0 + 7 - upcomingSunday.getDay()) % 7);
+	let upcomingSundayFormatted = moment(upcomingSunday).format('MM-DD-YYYY');
+	let relevantFriday = moment(upcomingSunday).subtract(2,'days');
+	let relevantFridayFormatted = moment(relevantFriday).format('MM-DD-YYYY');
+
 	let response = {
-		schedule:'This weekend is all about Winter Splendors. We will be viewing Mars, Neptune, the Blue Snowball, the Andromeda Galaxy, and much more.'
-	}
+		schedule:viewingSchedule[relevantFridayFormatted]
+	};
 
 	res.json(response);
 
