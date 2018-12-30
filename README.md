@@ -33,3 +33,4 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
 * GET `/sun` -- returns sunrise, sunset, twilight, and dusk information
 * GET `/moon` -- returns moonrise, moonset, and phase of the moon
 * GET `/events` -- returns summary, description, start/end time and location of events happening in the next 30 days
+* GET `/schedule` -- returns info on the viewing program for the upcoming/current weekend
