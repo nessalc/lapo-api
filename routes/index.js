@@ -4,6 +4,9 @@ var fetch = require('node-fetch');
 var suncalc = require('suncalc');
 var moment = require('moment');
 var viewingSchedule = require('../lib/viewingSchedule')
+let {PythonShell} = require('python-shell')
+var myPythonScriptPath = 'C:\\Users\\c41663\\Documents\\programming\\lake-afton-api\\routes\\whatsup.py';
+var pyshell = new PythonShell(myPythonScriptPath);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -58,6 +61,168 @@ router.get('/hours', function(req, res, next) {
 	res.json(response);
 })
 
+router.get('/planets2',function(req,res,next){
+	let lat = 37.62218579135644;
+	let lon = -97.62695789337158;
+	let elev=421;
+	data={
+		lat:lat,
+		lon:lon,
+		elev:elev,
+		tz:'America/Chicago',
+		body:[
+			'mercury',
+			'venus',
+			'mars',
+			'jupiter',
+			'saturn',
+			'uranus',
+			'neptune',
+			'pluto'
+		]
+	}
+	let pyshell=new PythonShell(myPythonScriptPath);
+	pyshell.send(JSON.stringify(data));
+	pyshell.on('message',function(message){
+		res.json(JSON.parse(message));
+	});
+	pyshell.end(function(err,code,signal){
+		if (err) throw err;
+		console.log('finished');
+	});
+})
+
+router.get('/moon2',function(req,res,next){
+	let lat = 37.62218579135644;
+	let lon = -97.62695789337158;
+	let elev=421;
+	data={
+		lat:lat,
+		lon:lon,
+		elev:elev,
+		tz:'America/Chicago',
+		body:[
+			'moon'
+		]
+	}
+	let pyshell=new PythonShell(myPythonScriptPath);
+	pyshell.send(JSON.stringify(data));
+	pyshell.on('message',function(message){
+		res.json(JSON.parse(message));
+	});
+	pyshell.end(function(err,code,signal){
+		if (err) throw err;
+		console.log('finished');
+	});
+})
+
+router.get('/sun2',function(req,res,next){
+	let lat = 37.62218579135644;
+	let lon = -97.62695789337158;
+	let elev=421;
+	data={
+		lat:lat,
+		lon:lon,
+		elev:elev,
+		tz:'America/Chicago',
+		body:[
+			'sun'
+		]
+	}
+	let pyshell=new PythonShell(myPythonScriptPath);
+	pyshell.send(JSON.stringify(data));
+	pyshell.on('message',function(message){
+		res.json(JSON.parse(message));
+	});
+	pyshell.end(function(err,code,signal){
+		if (err) throw err;
+		console.log('finished');
+	});
+})
+
+router.get('/whatsup',function(req,res,next){
+	let lat = 37.62218579135644;
+	let lon = -97.62695789337158;
+	let elev=421;
+	data={
+		lat:lat,
+		lon:lon,
+		elev:elev,
+		tz:'America/Chicago',
+		mag:6
+	}
+	let pyshell=new PythonShell(myPythonScriptPath);
+	pyshell.send(JSON.stringify(data));
+	pyshell.on('message',function(message){
+		res.json(JSON.parse(message));
+	});
+	pyshell.end(function(err,code,signal){
+		if (err) throw err;
+		console.log('finished');
+	});
+})
+
+router.get('/whatsup_next',function(req,res,next){
+	let lat = 37.62218579135644;
+	let lon = -97.62695789337158;
+	let elev=421;
+	let currentDate = new Date();
+	let upcomingSunday=currentDate;
+	upcomingSunday.setDate(currentDate.getDate() + (0 + 7 - currentDate.getDay()) % 7);
+	let Friday = moment(upcomingSunday).subtract(2,'days').format('YYYY-MM-DD');
+	let Saturday = moment(upcomingSunday).subtract(1,'days').format('YYYY-MM-DD');
+	let monthF=moment(Friday).month()+1;
+	var open,close;
+	switch (monthF) {
+		case 11:
+		case 12:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			open = '19:30';
+			close = '21:30';
+			break;
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+			open = '21:00';
+			close = '23:30';
+			break;
+		case 9:
+		case 10:
+			open = '20:30';
+			close = '22:30';
+			break;
+	}
+	if (moment(Friday+'T'+close).isAfter(currentDate)){
+		open=Friday+'T'+open
+		close=Friday+'T'+close
+	} else {
+		open=Saturday+'T'+open
+		close=Saturday+'T'+close
+	}
+	data={
+		lat:lat,
+		lon:lon,
+		elev:elev,
+		tz:'America/Chicago',
+		mag:6,
+		date:open,
+		end:close
+	}
+	let pyshell=new PythonShell(myPythonScriptPath);
+	pyshell.send(JSON.stringify(data));
+	pyshell.on('message',function(message){
+		res.json(JSON.parse(message));
+	});
+	pyshell.end(function(err,code,signal){
+		if (err) throw err;
+		console.log('finished');
+	});
+})
+
 router.get('/planets', async function(req, res, next) {
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
@@ -108,7 +273,7 @@ router.get('/planets', async function(req, res, next) {
 })
 
 router.get('/sun', function(req, res, next) {
-	let currentTime = new Date()
+	let currentTime = new Date();
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
 	let response = {
