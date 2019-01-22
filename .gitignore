@@ -59,3 +59,10 @@ typings/
 
 # next.js build output
 .next
+
+# python compiled cache
+__pycache__
+*.pyc
+
+routes/sfwhatsup.py
+routes/skyfield_data/*

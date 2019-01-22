@@ -19,11 +19,12 @@ object_dict=celestial_objects.get_objects([
     (r'C:\Users\c41663\Documents\programming\lake-afton-api\routes\caldwell.txt',None),
     (r'C:\Users\c41663\Documents\programming\lake-afton-api\routes\stars.txt','star'),
     ('https://minorplanetcenter.net/iau/Ephemerides/Bright/2018/Soft03Bright.txt','solar_system'),
-    #('https://minorplanetcenter.net/iau/Ephemerides/Comets/Soft03Cmt.txt','solar_system'),
-    #('http://celestrak.com/NORAD/elements/visual.txt','satellite')
+    ('https://minorplanetcenter.net/iau/Ephemerides/Comets/Soft03Cmt.txt','solar_system'),
+    ('http://celestrak.com/NORAD/elements/visual.txt','satellite')
 ])
 
 def read_in():
+    """Read parameters from node call."""
     lines=sys.stdin.readlines()
     return json.loads(lines[0])
 
@@ -32,6 +33,7 @@ def get_location(lat,
                  elev=None,
                  date=None,
                  horizon=None):
+    """Create location from provided information."""
     obs=ephem.Observer()
     obs.lat,obs.lon=lat,lon
     if elev:
@@ -43,6 +45,7 @@ def get_location(lat,
     return obs
 
 def format_angle(angle,dms=False):
+    """Format angle as dms tuple instead of radians."""
     a=angle.znorm
     a*=180/ephem.pi
     if dms:
@@ -57,6 +60,7 @@ def format_angle(angle,dms=False):
     return a
 
 def format_ra(angle,hms=False):
+    """Format right ascension as hms tuple instead of radians."""
     a=angle.norm
     a*=12/ephem.pi
     if hms:
@@ -71,8 +75,8 @@ def format_ra(angle,hms=False):
     return a
 
 def get_data(object_list,
-             location=None,
-             ):
+             location=None):
+    """Create data dictionary for object list."""
     body_data=[]
     for o,body_type in object_list:
         if location:
@@ -137,8 +141,10 @@ def get_data(object_list,
     return body_data
 
 def whats_up(start,end,location,magnitude=6.):
+    """Find all objects that will be "up" between start and end time, from given location, with visibility greater than provided magnitude."""
     body_list=[]
-    start,end=ephem.Date(start),ephem.Date(end)
+    start_e,end_e=ephem.Date(start),ephem.Date(end)
+    location.date=start_e
     for o,body_type in filter(lambda x:x[1]!='planetary_moon',object_dict.values()):
         o.compute(location)
         if body_type!='satellite' and not o.circumpolar and not o.neverup:
@@ -146,11 +152,16 @@ def whats_up(start,end,location,magnitude=6.):
             setting=location.next_setting(o)
         elif body_type=='satellite':
             rising,rise_az,max_alt_time,max_alt,set_time,setting=location.next_pass(o)
-        if (o.circumpolar or rising<end or setting>start) and o.mag<magnitude:
+        if (o.circumpolar or rising<end_e or (setting>start_e and setting<end_e)) and o.mag<magnitude:
             body_list.append(o.name)
-    return body_list
+    return {
+        'start_time':start,
+        'end_time':end,
+        'objects':body_list
+    }
 
 def get_phase_name(moon,location=None,wiggle_room=1.5):
+    """Return name of the phase of the moon."""
     if location:
         date=location.date
     else:
@@ -173,8 +184,11 @@ def get_phase_name(moon,location=None,wiggle_room=1.5):
         return 'waning crescent'
 
 class Encoder(json.JSONEncoder):
+    """JSON Encoder to serialize datetime objects."""
+
     global tz
     def default(self,obj):
+        """JSON Encoder to serialize datetime objects."""
         if isinstance(obj,datetime.datetime):
             if obj.tzinfo is None or obj.tzinfo.utcoffset(obj) is None:
                 obj=pytz.utc.localize(obj)
@@ -184,6 +198,7 @@ class Encoder(json.JSONEncoder):
         return json.JSONEncoder.default(self,obj)
 
 def main():
+    """Process arguments."""
     global tz
     data=read_in()
     lat=str(data['lat']) if 'lat' in data.keys() else None
@@ -203,7 +218,7 @@ def main():
         end=end.astimezone(pytz.utc)
     min_magnitude=data['mag'] if 'mag' in data.keys() else 6
     if lat and lon:
-        location=get_location(lat,lon,elev,date)
+        location=get_location(lat,lon,elev,date,horizon)
     else:
         location=None
     try:

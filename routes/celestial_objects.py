@@ -21,7 +21,7 @@ def read_file(filename,object_type):
                 except Exception:
                     pass
     else:
-        for tle in [line[i:i+3] for i in range(0,len(file),3)]:
+        for tle in [file[i:i+3] for i in range(0,len(file),3)]:
             try:
                 file_objects[tle[0].lower()]=(ephem.readtle(tle[0],tle[1],tle[2]),object_type)
             except Exception:

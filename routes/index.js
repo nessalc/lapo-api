@@ -167,8 +167,8 @@ router.get('/whatsup_next',function(req,res,next){
 	let lon = -97.62695789337158;
 	let elev=421;
 	let currentDate = new Date();
-	let upcomingSunday=currentDate;
-	upcomingSunday.setDate(currentDate.getDate() + (0 + 7 - currentDate.getDay()) % 7);
+	let upcomingSunday=new Date();
+	upcomingSunday.setDate(upcomingSunday.getDate() + (0 + 7 - upcomingSunday.getDay()) % 7);
 	let Friday = moment(upcomingSunday).subtract(2,'days').format('YYYY-MM-DD');
 	let Saturday = moment(upcomingSunday).subtract(1,'days').format('YYYY-MM-DD');
 	let monthF=moment(Friday).month()+1;
