@@ -148,7 +148,7 @@ def whats_up(start,end,location,magnitude=6.):
     location.date=start_e
     for o,body_type in filter(lambda x:x[1]!='planetary_moon',object_dict.values()):
         o.compute(location)
-        circumpolar,neverup=False,False
+        circumpolar=False
         rising,setting=None,None
         if body_type!='satellite':# and not o.circumpolar and not o.neverup:
             try:
@@ -157,13 +157,10 @@ def whats_up(start,end,location,magnitude=6.):
             except ephem.AlwaysUpError:
                 circumpolar=True
             except ephem.NeverUpError:
-                neverup=True
+                pass
         elif body_type=='satellite':
-            try:
-                info=list(location.next_pass(o))
-                rising,setting=info[0],info[4]
-            except ValueError:
-                rising,setting=0,0
+            info=list(location.next_pass(o))
+            rising,setting=info[0],info[4]
         if o.mag<magnitude and (circumpolar or \
                                 (rising and start_e<rising<end_e) or \
                                 (setting and start_e<setting<end_e) or \
@@ -238,7 +235,7 @@ def main():
     end=data['end'] if 'end' in data.keys() else None
     if isinstance(end,str):
         end=dateutil.parser.parse(end)
-    if end.tzinfo is None or end.tzinfo.utcoffset(end) is None:
+    if end and (end.tzinfo is None or end.tzinfo.utcoffset(end) is None):
         end=pytz.timezone(tz).localize(end)
         end=end.astimezone(pytz.utc)
     min_magnitude=data['mag'] if 'mag' in data.keys() else 6
