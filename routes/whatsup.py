@@ -84,7 +84,7 @@ def get_data(object_list,
         else:
             o.compute()
         data={
-              'name':o.name,
+              'name':o.name.split('|') if o.name.find('|')>=0 else o.name,
               'ra':format_ra(o.ra,True),
               'dec':format_angle(o.dec),
               'size':o.size,
@@ -98,7 +98,8 @@ def get_data(object_list,
             data['spectral_type']=o._spect
         if body_type=='solar_system':
             data['earth_dist']={'au':o.earth_distance,'km':o.earth_distance*149597870.700,'mi':o.earth_distance*149597870700/1604.344}
-            data['sun_dist']={'au':o.sun_distance,'km':o.sun_distance*149597870.700,'mi':o.sun_distance*149597870700/1604.344}
+            if o.name!='Sun':
+                data['sun_dist']={'au':o.sun_distance,'km':o.sun_distance*149597870.700,'mi':o.sun_distance*149597870700/1604.344}
             data['phase']=o.phase
             if o.name=='Moon':
                 data['illuminated_surface']=o.moon_phase*100
@@ -147,13 +148,35 @@ def whats_up(start,end,location,magnitude=6.):
     location.date=start_e
     for o,body_type in filter(lambda x:x[1]!='planetary_moon',object_dict.values()):
         o.compute(location)
-        if body_type!='satellite' and not o.circumpolar and not o.neverup:
-            rising=location.next_rising(o)
-            setting=location.next_setting(o)
+        circumpolar,neverup=False,False
+        rising,setting=None,None
+        if body_type!='satellite':# and not o.circumpolar and not o.neverup:
+            try:
+                rising=location.next_rising(o,start=location.previous_antitransit(o))
+                setting=location.next_setting(o,start=rising)
+            except ephem.AlwaysUpError:
+                circumpolar=True
+            except ephem.NeverUpError:
+                neverup=True
         elif body_type=='satellite':
-            rising,rise_az,max_alt_time,max_alt,set_time,setting=location.next_pass(o)
-        if (o.circumpolar or rising<end_e or (setting>start_e and setting<end_e)) and o.mag<magnitude:
-            body_list.append(o.name)
+            try:
+                info=list(location.next_pass(o))
+                rising,setting=info[0],info[4]
+            except ValueError:
+                rising,setting=0,0
+        if o.mag<magnitude and (circumpolar or \
+                                (rising and start_e<rising<end_e) or \
+                                (setting and start_e<setting<end_e) or \
+                                (rising and setting and rising<start_e and setting>end_e)):
+            if rising or setting or circumpolar:
+                body_list.append({
+                    'name':o.name.split('|') if o.name.find('|')>=0 else o.name,
+                    'magnitude':o.mag
+                })
+            if rising:
+                body_list[-1]['rise_time']=rising.datetime()
+            if setting:
+                body_list[-1]['set_time']=setting.datetime()
     return {
         'start_time':start,
         'end_time':end,
@@ -209,11 +232,13 @@ def main():
     tz=data['tz'] if 'tz' in data.keys() else default_tz
     if isinstance(date,str):
         date=dateutil.parser.parse(date)
+    if date.tzinfo is None or date.tzinfo.utcoffset(date) is None:
         date=pytz.timezone(tz).localize(date)
         date=date.astimezone(pytz.utc)
     end=data['end'] if 'end' in data.keys() else None
     if isinstance(end,str):
         end=dateutil.parser.parse(end)
+    if end.tzinfo is None or end.tzinfo.utcoffset(end) is None:
         end=pytz.timezone(tz).localize(end)
         end=end.astimezone(pytz.utc)
     min_magnitude=data['mag'] if 'mag' in data.keys() else 6

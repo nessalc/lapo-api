@@ -30,7 +30,48 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
 * GET `/` -- returns a basic welcome message
 * GET `/hours` -- returns current hours of operation
 * GET `/planets` -- returns planets that are visible right now
+* GET `/planets2` -- returns the following information about all planets:
+    * right ascension/declination
+    * size (diameter in arcseconds)
+    * magnitude
+    * earth distance (au, km, mi)
+    * sun distance (au, km, mi)
+    * phase
+    * constellation
+    * rise time/rise azimuth
+    * transit time/transit altitude
+    * set time/set azimuth, 
 * GET `/sun` -- returns sunrise, sunset, twilight, and dusk information
+* GET `/sun2` -- returns the following information about the sun:
+    * right ascension/declination
+    * size (diameter in arcseconds)
+    * magnitude
+    * earth distance (au, km, mi)
+    * next solstice
+    * next equinox
+    * constellation
+    * rise time/rise azimuth
+    * transit time/transit altitude
+    * set time/set azimuth, 
 * GET `/moon` -- returns moonrise, moonset, and phase of the moon
+* GET `/moon2` -- returns the following information about the moon:
+    * right ascension/declination
+    * size (diameter in arcseconds)
+    * magnitude
+    * earth distance (au, km, mi)
+    * sun distance (au, km, mi)
+    * phase
+    * illuminated surface
+    * phase name
+    * next new moon
+    * next first quarter
+    * next full moon
+    * next last quarter
+    * constellation
+    * rise time/rise azimuth
+    * transit time/transit altitude
+    * set time/set azimuth
 * GET `/events` -- returns summary, description, start/end time and location of events happening in the next 30 days
 * GET `/schedule` -- returns info on the viewing program for the upcoming/current weekend
+* GET `/whatsup` -- return names of objects greater than magnitude 6 visible "right now" (see [here](objects.md) for list of objects)
+* GET `/whatsup_next` -- returns names of objects greater than magnitude 6 that will be visible the next time LAPO is open.

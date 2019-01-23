@@ -32,35 +32,45 @@ def get_objects(additional_catalogs_list):
     """Return a dictionary of all objects."""
     object_dict={}
     #Solar System
-    object_dict['mercury']=(ephem.Mercury(),'solar_system')
-    object_dict['venus']=(ephem.Venus(),'solar_system')
-    object_dict['mars']=(ephem.Mars(),'solar_system')
-    object_dict['jupiter']=(ephem.Jupiter(),'solar_system')
-    object_dict['saturn']=(ephem.Saturn(),'solar_system')
-    object_dict['uranus']=(ephem.Uranus(),'solar_system')
-    object_dict['neptune']=(ephem.Neptune(),'solar_system')
-    object_dict['moon']=(ephem.Moon(),'solar_system')
     object_dict['sun']=(ephem.Sun(),'solar_system')
+
+    object_dict['mercury']=(ephem.Mercury(),'solar_system')
+
+    object_dict['venus']=(ephem.Venus(),'solar_system')
+
+    object_dict['moon']=(ephem.Moon(),'solar_system')
+
+    object_dict['mars']=(ephem.Mars(),'solar_system')
     object_dict['phobos']=(ephem.Phobos(),'planetary_moon')
     object_dict['deimos']=(ephem.Deimos(),'planetary_moon')
-    object_dict['io']=(ephem.Io(),'planetary_moon')
-    object_dict['europa']=(ephem.Europa(),'planetary_moon')
+
+    object_dict['jupiter']=(ephem.Jupiter(),'solar_system')
     object_dict['ganymede']=(ephem.Ganymede(),'planetary_moon')
     object_dict['callisto']=(ephem.Callisto(),'planetary_moon')
-    object_dict['mimas']=(ephem.Mimas(),'planetary_moon')
-    object_dict['enceladus']=(ephem.Enceladus(),'planetary_moon')
+    object_dict['io']=(ephem.Io(),'planetary_moon')
+    object_dict['europa']=(ephem.Europa(),'planetary_moon')
+
+    object_dict['saturn']=(ephem.Saturn(),'solar_system')
+    object_dict['titan']=(ephem.Titan(),'planetary_moon')
+    object_dict['iapetus']=(ephem.Iapetus(),'planetary_moon')
+    object_dict['rhea']=(ephem.Rhea(),'planetary_moon')
     object_dict['tethys']=(ephem.Tethys(),'planetary_moon')
     object_dict['dione']=(ephem.Dione(),'planetary_moon')
-    object_dict['rhea']=(ephem.Rhea(),'planetary_moon')
-    object_dict['titan']=(ephem.Titan(),'planetary_moon')
-    object_dict['hyperion']=(ephem.Hyperion(),'planetary_moon')
-    object_dict['iapetus']=(ephem.Iapetus(),'planetary_moon')
-    object_dict['ariel']=(ephem.Ariel(),'planetary_moon')
-    object_dict['umbriel']=(ephem.Umbriel(),'planetary_moon')
+    object_dict['enceladus']=(ephem.Enceladus(),'planetary_moon')
+    object_dict['mimas']=(ephem.Mimas(),'planetary_moon')
+
+    object_dict['uranus']=(ephem.Uranus(),'solar_system')
     object_dict['titania']=(ephem.Titania(),'planetary_moon')
     object_dict['oberon']=(ephem.Oberon(),'planetary_moon')
+    object_dict['hyperion']=(ephem.Hyperion(),'planetary_moon')
+    object_dict['ariel']=(ephem.Ariel(),'planetary_moon')
+    object_dict['umbriel']=(ephem.Umbriel(),'planetary_moon')
     object_dict['miranda']=(ephem.Miranda(),'planetary_moon')
+
+    object_dict['neptune']=(ephem.Neptune(),'solar_system')
+
     object_dict['pluto']=(ephem.Pluto(),'solar_system')
+
     for file,object_type in additional_catalogs_list:
         object_dict.update(read_file(file,object_type))
     return object_dict
