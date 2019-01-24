@@ -66,3 +66,4 @@ __pycache__
 
 routes/sfwhatsup.py
 routes/skyfield_data/*
+.vscode/*
