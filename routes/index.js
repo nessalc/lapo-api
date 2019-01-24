@@ -4,6 +4,7 @@ var fetchNorm = require('node-fetch')
 const {fetch} = require('simple-fetch-cache');
 var suncalc = require('suncalc');
 var moment = require('moment');
+var moment = require('moment-timezone')
 var viewingSchedule = require('../lib/viewingSchedule')
 let {PythonShell} = require('python-shell')
 var myPythonScriptPath = '.\\routes\\whatsup.py';
@@ -437,11 +438,46 @@ router.get('/weather', async function(req, res, next) {
 				iconurl='http://openweathermap.org/img/w/'+weather.icon+'.png';
 				weather.iconurl=iconurl
 			});
-			//reformat date
-			reply.dt=moment.unix(reply.dt).utc()
+			// reformat date
+			reply.dt=moment.unix(reply.dt);
 			// remove internal parameters
 			delete reply.sys;
 			delete reply.cod;
+			res.json(reply);
+		},
+		function(err) {
+			console.log('error',err);
+		}
+	).catch(function(err){
+		console.log('error',err);
+	});
+})
+
+router.get('/forecast', async function(req, res, next) {
+	let lat = 37.62218579135644;
+	let lon = -97.62695789337158;
+	let key = '0dff06f7549362ac6159aa07ae40f5fa';
+	let tz = 'America/Chicago';
+	const fiveMinutes = 5 * 60 * 60 * 1000;
+	url = 'http://api.openweathermap.org/data/2.5/forecast?lat='+lat+'&lon='+lon+'&units=imperial&APPID='+key
+	fetch(url, fiveMinutes).then(
+		function(response) {
+			reply=response.reply
+			forecasts = reply.list;
+			forecasts.forEach(function(forecast){
+				forecast.dt=moment.unix(forecast.dt).tz(tz).format();
+				weathers = forecast.weather; //yes, apparently there can be more than one "weather"
+				weathers.forEach(function(weather){
+					iconurl='http://openweathermap.org/img/w/'+weather.icon+'.png';
+					weather.iconurl=iconurl
+				});
+				// remove internal parameters
+				delete forecast.main.temp_kf;
+				delete forecast.sys;
+				delete forecast.dt_txt;
+			});
+			delete reply.cod;
+			delete reply.message;
 			res.json(reply);
 		},
 		function(err) {
