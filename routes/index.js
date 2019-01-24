@@ -5,7 +5,7 @@ var suncalc = require('suncalc');
 var moment = require('moment');
 var viewingSchedule = require('../lib/viewingSchedule')
 let {PythonShell} = require('python-shell')
-var myPythonScriptPath = 'C:\\Users\\c41663\\Documents\\programming\\lake-afton-api\\routes\\whatsup.py';
+var myPythonScriptPath = '.\\routes\\whatsup.py';
 var pyshell = new PythonShell(myPythonScriptPath);
 
 /* GET home page. */

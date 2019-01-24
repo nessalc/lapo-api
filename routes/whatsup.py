@@ -15,9 +15,9 @@ time_format='%Y-%m-%dT%H:%M:%S%z'
 default_tz='America/Chicago'
 
 object_dict=celestial_objects.get_objects([
-    (r'C:\Users\c41663\Documents\programming\lake-afton-api\routes\messier.txt',None),
-    (r'C:\Users\c41663\Documents\programming\lake-afton-api\routes\caldwell.txt',None),
-    (r'C:\Users\c41663\Documents\programming\lake-afton-api\routes\stars.txt','star'),
+    (r'.\routes\messier.txt',None),
+    (r'.\routes\caldwell.txt',None),
+    (r'.\routes\stars.txt','star'),
     ('https://minorplanetcenter.net/iau/Ephemerides/Bright/2018/Soft03Bright.txt','solar_system'),
     ('https://minorplanetcenter.net/iau/Ephemerides/Comets/Soft03Cmt.txt','solar_system'),
     ('http://celestrak.com/NORAD/elements/visual.txt','satellite')

@@ -9,7 +9,11 @@ def read_file(filename,object_type):
     """Read the given file into a dictionary."""
     file_objects={}
     if re.match('http',filename):
-        file=requests.get(filename).content.decode('utf-8').split('\n')
+        ask=requests.get(filename)
+        if ask.status_code==200:
+            file=ask.content.decode('utf-8').split('\n')
+        else:
+            file=[]
     if os.path.isfile(filename):
         with open(filename) as f:
             file=f.readlines()
