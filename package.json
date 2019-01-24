@@ -16,6 +16,7 @@
     "morgan": "^1.9.1",
     "node-fetch": "^2.2.0",
     "python-shell": "^1.0.7",
+    "simple-fetch-cache": "^1.4.0",
     "suncalc": "^1.8.0"
   }
 }

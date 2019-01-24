@@ -69,3 +69,4 @@ routes/skyfield_data/*
 .vscode
 .vscode/
 .vscode/*
+*.sqlite
