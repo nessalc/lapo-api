@@ -64,9 +64,7 @@ typings/
 __pycache__
 *.pyc
 
-routes/sfwhatsup.py
-routes/skyfield_data/*
+lib/sfwhatsup.py
+lib/skyfield_data/*
 .vscode
-.vscode/
-.vscode/*
 *.sqlite

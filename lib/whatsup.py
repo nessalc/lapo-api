@@ -13,9 +13,9 @@ time_format='%Y-%m-%dT%H:%M:%S%z'
 default_tz='America/Chicago'
 
 object_dict=celestial_objects.get_objects([
-    (r'.\routes\messier.txt', None),
-    (r'.\routes\caldwell.txt', None),
-    (r'.\routes\stars.txt', 'star'),
+    ('./lib/messier.txt', None),
+    ('./lib/caldwell.txt', None),
+    ('./lib/stars.txt', 'star'),
     ('https://minorplanetcenter.net/iau/Ephemerides/Bright/2018/Soft03Bright.txt', 'solar_system'),
     ('https://minorplanetcenter.net/iau/Ephemerides/Comets/Soft03Cmt.txt', 'solar_system'),
     ('http://celestrak.com/NORAD/elements/visual.txt', 'satellite')

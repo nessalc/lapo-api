@@ -3,11 +3,10 @@ var router = express.Router();
 var fetchNorm = require('node-fetch')
 const {fetch} = require('simple-fetch-cache');
 var suncalc = require('suncalc');
-var moment = require('moment');
 var moment = require('moment-timezone')
 var viewingSchedule = require('../lib/viewingSchedule')
 let {PythonShell} = require('python-shell')
-var myPythonScriptPath = '.\\routes\\whatsup.py';
+var myPythonScriptPath = './lib/whatsup.py';
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -424,31 +423,62 @@ router.get('/whatsup_next',function(req,res,next){
 	});
 })
 
-router.get('/weather', async function(req, res, next) {
+router.get('/weather', async function(req,res,next) {
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
 	let key = '0dff06f7549362ac6159aa07ae40f5fa'
 	const fiveMinutes = 5 * 60 * 60 * 1000;
-	url = 'http://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+lon+'&units=imperial&APPID='+key
+	url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lon + '&units=metric&APPID=' + key
 	fetch(url, fiveMinutes).then(
 		function(response) {
-			reply=response.reply
+			reply = response.reply
 			weathers = reply.weather; //yes, apparently there can be more than one "weather"
-			weathers.forEach(function(weather){
-				iconurl='http://openweathermap.org/img/w/'+weather.icon+'.png';
-				weather.iconurl=iconurl
+			weathers.forEach(function(weather) {
+				iconurl = 'http://openweathermap.org/img/w/' + weather.icon + '.png';
+				weather.iconurl = iconurl
 			});
+			var T = reply.main.temp * 9 / 5 + 32;
+			var W = reply.wind.speed / 0.44704;
+			var RH = reply.main.humidity;
+			if (T <= 50 && W >=3) {
+				windChill_F = 35.74 + (0.6215 * T) - (35.75 * W ** 0.16) + (0.4275 * T * W ** 0.16);
+				reply.main.windChill = Math.round(((windChill_F - 32) * 5 / 9) * 100) / 100;
+				reply.main.windChill_F = Math.round(windChill_F * 100) / 100;
+			}
+			else if (T > 80) {
+				var HI = 0.5 * (T + 61 + ((T - 68) * 1.2) + RH * 0.094);
+				if ((HI + T) / 2 >= 80) {
+					HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - 0.22475541 * T * RH - 0.00683783 * T * T - 0.05481717 * RH * RH + 0.00122874 * T * T * RH + 0.00085282 * T * RH * RH - 0.00000199 * T * T * RH * RH;
+					var ADJ = 0;
+					if (RH < 13 && T >= 80 && T <= 112) {
+						ADJ = -(((13 - RH) / 4) * Math.sqrt((17 - Math.abs(T - 95)) / 17));
+					} else if (RH > 85 && T >= 80 && T <= 87) {
+						ADJ = ((RH - 85) / 10) * ((87 - T) / 5);
+					}
+					HI = HI + ADJ
+					reply.main.heat_index = Math.round(((reply.main.heat_index_F - 32) * 5 / 9) * 100) / 100;
+					reply.main.heat_index_F = Math.round(HI * 100) / 100;
+				}
+			}
+			reply.main.temp_F = Math.round(T * 100) / 100;
+			reply.main.temp_min_F = Math.round((reply.main.temp_min * 9 / 5 + 32) * 100) / 100;
+			reply.main.temp_max_F = Math.round((reply.main.temp_max * 9 / 5 + 32) * 100) / 100;
+			reply.wind.speed_mph = Math.round(W * 100) / 100;
+			if (reply.hasOwnProperty('visibility')) {
+				reply.visibility_mi = Math.round((reply.visibility / 1609.344) * 100) / 100;
+			}
 			// reformat date
-			reply.dt=moment.unix(reply.dt);
+			reply.dt = moment.unix(reply.dt).tz('America/Chicago').format();
 			// remove internal parameters
 			delete reply.sys;
 			delete reply.cod;
-			res.json(reply);
+			//res.json(reply);
+			return reply;
 		},
 		function(err) {
 			console.log('error',err);
 		}
-	).catch(function(err){
+	).catch(function(err) {
 		console.log('error',err);
 	});
 })
@@ -459,12 +489,23 @@ router.get('/forecast', async function(req, res, next) {
 	let key = '0dff06f7549362ac6159aa07ae40f5fa';
 	let tz = 'America/Chicago';
 	const fiveMinutes = 5 * 60 * 60 * 1000;
-	url = 'http://api.openweathermap.org/data/2.5/forecast?lat='+lat+'&lon='+lon+'&units=imperial&APPID='+key
+	url = 'http://api.openweathermap.org/data/2.5/forecast?lat='+lat+'&lon='+lon+'&units=metric&APPID='+key
 	fetch(url, fiveMinutes).then(
 		function(response) {
 			reply=response.reply
 			forecasts = reply.list;
 			forecasts.forEach(function(forecast){
+				var T = forecast.main.temp * 9 / 5 + 32;
+				var W = forecast.wind.speed / 0.44704;
+				forecast.main.temp_F = Math.round(T * 100) / 100;
+				if (forecast.temp_min == forecast.temp_max) {
+					delete forecast.temp_min;
+					delete forecast.temp_max;
+				} else {
+					forecast.main.temp_min_F = Math.round((forecast.main.temp_min * 9 / 5 + 32) * 100) / 100;
+					forecast.main.temp_max_F = Math.round((forecast.main.temp_max * 9 / 5 + 32) * 100) / 100;
+				}
+				forecast.wind.speed_mph = Math.round(W * 100) / 100;
 				forecast.dt=moment.unix(forecast.dt).tz(tz).format();
 				weathers = forecast.weather; //yes, apparently there can be more than one "weather"
 				weathers.forEach(function(weather){
