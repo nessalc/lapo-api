@@ -1,12 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var fetchNorm = require('node-fetch')
 var suncalc = require('suncalc');
 var moment = require('moment-timezone')
 var viewingSchedule = require('../lib/viewingSchedule')
 const {weather,forecast} = require('../lib/weather');
 let {PythonShell} = require('python-shell')
 var myPythonScriptPath = './lib/whatsup.py';
+const {get_planet_ephem} = require('../lib/astropical');
+const {get_events} = require('../lib/events')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -64,14 +65,10 @@ router.get('/hours', function(req, res, next) {
 router.get('/planets', async function(req, res, next) {
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
-	let url = 'http://www.astropical.space/astrodb/api-ephem.php?lat='+lat+'&lon='+lon;
-
-	let response = await fetchNorm(url);
-	let data = await response.json();
-
+	const fiveMinutes = 5 * 60 * 60 * 1000;
+	let data = await get_planet_ephem(lat,lon,fiveMinutes);
 	// now we have the data
-	let planets = data.response
-
+	let planets = data.response;
 	let visiblePlanets = []
 
 	planets.forEach(function(planet) {
@@ -110,12 +107,14 @@ router.get('/planets', async function(req, res, next) {
 
 })
 
-router.get('/planets2',function(req,res,next){
+router.get('/planets2', async function(req,res,next){
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
+	let key = '0dff06f7549362ac6159aa07ae40f5fa'
 	let elev=421;
+	const fiveMinutes = 5 * 60 * 60 * 1000;
 	let tz = 'America/Chicago';
-	weather_data = weather(lat,lon,key,fiveMinutes)
+	weather_data = await weather(lat,lon,key,fiveMinutes)
 	pressure = weather_data.main.pressure;
 	temp = weather_data.main.temp;
 	data={
@@ -307,18 +306,10 @@ router.get('/moon2', async function(req,res,next){
 router.get('/events', async function(req, res, next) {
 
 	let key = 'AIzaSyDeefIJYspYQXSULfbivbzD26XCiOfIlYc';
-	let calenderId = 'lakeafton.com_qojc7kseu2jv9j7jji2gqgqud4@group.calendar.google.com';
-	let now = new Date();
-	let thirty_days_later = new Date().setDate(now.getDate()+30);
-	// convert dates to ISO strings for Google API
-	let timeMin = now.toISOString();
-	let timeMax = new Date(thirty_days_later).toISOString();
-	let orderBy = 'startTime';
-
-	let url = 'https://www.googleapis.com/calendar/v3/calendars/'+calenderId+'/events?key='+key+'&timeMin='+timeMin+'&timeMax='+timeMax+'&singleEvents=true&orderBy='+orderBy;
-	let response = await fetchNorm(url);
-	let data = await response.json();
-
+	let calendarId = 'lakeafton.com_qojc7kseu2jv9j7jji2gqgqud4@group.calendar.google.com';
+	const fiveMinutes = 5 * 60 * 60 * 1000;
+	let data = await get_events(calendarId,key,fiveMinutes);
+	
 	let events = data.items
 	let events_for_display = []
 
