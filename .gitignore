@@ -68,3 +68,4 @@ lib/sfwhatsup.py
 lib/skyfield_data/*
 .vscode
 *.sqlite
+keys.js

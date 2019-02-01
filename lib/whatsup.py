@@ -83,7 +83,9 @@ def get_data(object_list: List[Tuple[ephem.Body, str]],
              location: Optional[ephem.Observer] = None) -> list:
     """Create data dictionary for object list."""
     body_data = []
-    for o,body_type in object_list:
+    if location:
+        body_data.append({'query_date':location.date.datetime()})
+    for o, body_type in object_list:
         if location:
             o.compute(location)
         else:
@@ -206,7 +208,7 @@ def whats_up(start: datetime.datetime, end: datetime.datetime, location: ephem.O
         if o.mag < magnitude and (circumpolar or \
                                   (rising and start_e < rising < end_e) or \
                                   (setting and start_e < setting < end_e) or \
-                                  (rising and setting and rising < start_e and setting > end_e)):
+                                  (rising and setting and (rising < start_e) and (setting > end_e))):
             # If it's in the sky and bright enough, add the entry to the list
             if rising or setting or circumpolar:
                 body_list.append({
@@ -274,16 +276,17 @@ def main() -> NoReturn:
     tz = data['tz'] if 'tz' in data.keys() else default_tz
     temp = data['temp'] if 'temp' in data.keys() else 25
     pressure = data['pressure'] if 'pressure' in data.keys() else None
-    if isinstance(date,str):
+    if isinstance(date, str):
         date = dateutil.parser.parse(date)
     if date.tzinfo is None or date.tzinfo.utcoffset(date) is None:
         date = pytz.timezone(tz).localize(date)
-        date = date.astimezone(pytz.utc)
+    date = date.astimezone(pytz.utc)
     end = data['end'] if 'end' in data.keys() else None
     if isinstance(end, str):
         end = dateutil.parser.parse(end)
     if end and (end.tzinfo is None or end.tzinfo.utcoffset(end) is None):
         end = pytz.timezone(tz).localize(end)
+    if end:
         end = end.astimezone(pytz.utc)
     min_magnitude = data['mag'] if 'mag' in data.keys() else 6
     if lat and lon:
