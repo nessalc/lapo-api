@@ -1,3 +1,4 @@
+require('dotenv').config()
 var express = require('express');
 var router = express.Router();
 var suncalc = require('suncalc');
@@ -7,7 +8,6 @@ const {weather,forecast} = require('../lib/weather');
 const {get_planet_ephem} = require('../lib/astropical');
 const {get_events} = require('../lib/events')
 const {get_elevation,python_call} = require('../lib/helpers')
-const keys = require('../lib/keys')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -146,7 +146,7 @@ var planets2_regex = new RegExp(`^\\/planets2(?:\\/(${latitude_regex})\\/(${long
 router.get(planets2_regex, async function(req, res, next) {
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
-	let key = keys.OpenWeatherMapAPIKey
+	let key = process.env.OpenWeatherMapAPIKey
 	let elev = await get_elevation(lat, lon);
 	const fiveMinutes = 5 * 60 * 60 * 1000;
 	let tz = 'America/Chicago';
@@ -239,7 +239,7 @@ var sun2_regex = new RegExp(`^\\/sun2(?:\\/(${latitude_regex})\\/(${longitude_re
 router.get(sun2_regex, async function(req, res, next) {
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
-	let key = keys.OpenWeatherMapAPIKey
+	let key = process.env.OpenWeatherMapAPIKey
 	const fiveMinutes = 5 * 60 * 60 * 1000;
 	let elev = await get_elevation(lat, lon);
 	let tz = 'America/Chicago';
@@ -336,7 +336,7 @@ var moon2_regex = new RegExp(`\\/moon2(?:\\/(${latitude_regex})\\/(${longitude_r
 router.get(moon2_regex, async function(req, res, next) {
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
-	let key = keys.OpenWeatherMapAPIKey
+	let key = process.env.OpenWeatherMapAPIKey
 	let elev = await get_elevation(lat, lon);
 	let tz = 'America/Chicago';
 	let date = moment().format();
@@ -366,8 +366,8 @@ router.get(moon2_regex, async function(req, res, next) {
 
 router.get('/events', async function(req, res, next) {
 
-	let key = keys.GoogleCalendarAPIKey;
-	let calendarId = 'lakeafton.com_qojc7kseu2jv9j7jji2gqgqud4@group.calendar.google.com';
+	let key = process.env.GoogleCalendarAPIKey;
+	let calendarId = process.env.GoogleCalendarId
 	const fiveMinutes = 5 * 60 * 60 * 1000;
 	let data = await get_events(calendarId, key, fiveMinutes);
 	
@@ -433,7 +433,7 @@ var whatsup_regex = new RegExp(`\\/whatsup(?:\\/(${latitude_regex})\\/(${longitu
 router.get(whatsup_regex, async function(req, res, next) {
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
-	let key = keys.OpenWeatherMapAPIKey;
+	let key = process.env.OpenWeatherMapAPIKey;
 	const fiveMinutes = 5 * 60 * 60 * 1000;
 	let elev = await get_elevation(lat,lon);
 	let tz = 'America/Chicago';
@@ -541,7 +541,7 @@ router.get(weather_regex, async function(req, res, next) {
 	if (req.params[0]) lat = parseFloat(req.params[0]);
 	if (req.params[1]) lon = parseFloat(req.params[1]);
 	if (req.params[2]) tz = req.params[2];
-	let key = keys.OpenWeatherMapAPIKey;
+	let key = process.env.OpenWeatherMapAPIKey;
 	const fiveMinutes = 5 * 60 * 60 * 1000;
 	reply = await weather(lat, lon, key, fiveMinutes);
 	weathers = reply.weather; //yes, apparently there can be more than one "weather"
@@ -599,7 +599,7 @@ var forecast_regex = new RegExp(`\\/forecast(?:\\/(${latitude_regex})\\/(${longi
 router.get(forecast_regex, async function(req, res, next) {
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
-	let key = keys.OpenWeatherMapAPIKey;
+	let key = process.env.OpenWeatherMapAPIKey;
 	let tz = 'America/Chicago';
 	if (req.params[0]) lat = parseFloat(req.params[0]);
 	if (req.params[1]) lon = parseFloat(req.params[1]);
