@@ -147,7 +147,7 @@ router.get(planets2_regex, async function(req, res, next) {
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
 	let key = process.env.OpenWeatherMapAPIKey
-	let elev = await get_elevation(lat, lon);
+	let elev = await get_elevation(lat, lon, process.env.GooglePlacesAPIKey);
 	const fiveMinutes = 5 * 60 * 60 * 1000;
 	let tz = 'America/Chicago';
 	let date = moment().format();
@@ -241,7 +241,7 @@ router.get(sun2_regex, async function(req, res, next) {
 	let lon = -97.62695789337158;
 	let key = process.env.OpenWeatherMapAPIKey
 	const fiveMinutes = 5 * 60 * 60 * 1000;
-	let elev = await get_elevation(lat, lon);
+	let elev = await get_elevation(lat, lon, process.env.GooglePlacesAPIKey);
 	let tz = 'America/Chicago';
 	let date = moment().format();
 	if (req.params[0]) lat = parseFloat(req.params[0]);
@@ -337,7 +337,7 @@ router.get(moon2_regex, async function(req, res, next) {
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
 	let key = process.env.OpenWeatherMapAPIKey
-	let elev = await get_elevation(lat, lon);
+	let elev = await get_elevation(lat, lon, process.env.GooglePlacesAPIKey);
 	let tz = 'America/Chicago';
 	let date = moment().format();
 	if (req.params[0]) lat = parseFloat(req.params[0]);
@@ -435,7 +435,7 @@ router.get(whatsup_regex, async function(req, res, next) {
 	let lon = -97.62695789337158;
 	let key = process.env.OpenWeatherMapAPIKey;
 	const fiveMinutes = 5 * 60 * 60 * 1000;
-	let elev = await get_elevation(lat,lon);
+	let elev = await get_elevation(lat, lon, process.env.GooglePlacesAPIKey);
 	let tz = 'America/Chicago';
 	let start = new moment().format();
 	let end = start;
@@ -471,7 +471,7 @@ This is specific to LAPO, so no fancy stuff
 router.get('/whatsup_next', async function(req,res,next){
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
-	let elev = await get_elevation(lat,lon);
+	let elev = await get_elevation(lat,lon,process.env.GooglePlacesAPIKey);
 	let tz = 'America/Chicago';
 	if (req.params[0]) lat = parseFloat(req.params[0]);
 	if (req.params[1]) lon = parseFloat(req.params[1]);
