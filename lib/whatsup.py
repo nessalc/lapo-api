@@ -9,10 +9,10 @@ import dateutil.parser
 import celestial_objects
 from typing import Optional, Union, Tuple, NoReturn, List
 
-time_format='%Y-%m-%dT%H:%M:%S%z'
-default_tz='America/Chicago'
+time_format = '%Y-%m-%dT%H:%M:%S%z'
+default_tz = 'America/Chicago'
 
-object_dict=celestial_objects.get_objects([
+object_dict = celestial_objects.get_objects([
     ('./lib/messier.txt', None),
     ('./lib/caldwell.txt', None),
     ('./lib/stars.txt', 'star'),
@@ -205,6 +205,9 @@ def whats_up(start: datetime.datetime, end: datetime.datetime, location: ephem.O
         #    b. Does it rise during the given timeframe?
         #    c. Does it set during the given timeframe?
         #    d. Does it rise before the given timeframe and set after the given timeframe?
+        if o.mag < -30:
+            # something's wrong with the data--skip it.
+            continue
         if o.mag < magnitude and (circumpolar or \
                                   (rising and start_e < rising < end_e) or \
                                   (setting and start_e < setting < end_e) or \
@@ -221,6 +224,9 @@ def whats_up(start: datetime.datetime, end: datetime.datetime, location: ephem.O
             # If it has a set time, add that to the most recently added item
             if setting:
                 body_list[-1]['set_time'] = setting.datetime()
+            if o.name == 'Moon':
+                body_list[-1]['phase'] = o.moon_phase * 100
+    body_list.sort(key = lambda x: x['magnitude'])
     return {
         'start_time': start, # start of timeframe
         'end_time': end, # end of timeframe

@@ -32,9 +32,9 @@ router.get('/hours', function(req, res, next) {
 	switch (month) {
 		case 3:
 		case 4:
-			response.hours.prettyHours = '7:30pm - 9:30pm';
-			response.hours.open = '7:30pm';
-			response.hours.close = '9:30pm';
+			response.hours.prettyHours = '8:30pm - 10:30pm';
+			response.hours.open = '8:30pm';
+			response.hours.close = '10:30pm';
 			break;
 		case 5:
 		case 6:
@@ -488,8 +488,6 @@ router.get('/whatsup_next', async function(req,res,next){
 		case 12:
 		case 1:
 		case 2:
-		case 3:
-		case 4:
 			open = '19:30';
 			close = '21:30';
 			break;
@@ -500,6 +498,8 @@ router.get('/whatsup_next', async function(req,res,next){
 			open = '21:00';
 			close = '23:30';
 			break;
+		case 3:
+		case 4:
 		case 9:
 		case 10:
 			open = '20:30';
