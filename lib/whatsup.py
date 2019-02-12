@@ -82,9 +82,9 @@ def format_ra(angle: float, hms: bool = False) -> Union[float, Tuple[int, int, f
 def get_data(object_list: List[Tuple[ephem.Body, str]],
              location: Optional[ephem.Observer] = None) -> list:
     """Create data dictionary for object list."""
-    body_data = []
+    body_data = {}
     if location:
-        body_data.append({'query_date':location.date.datetime()})
+        body_data['query_date'] = location.date.datetime()
     for o, body_type in object_list:
         if location:
             o.compute(location)
@@ -175,7 +175,7 @@ def get_data(object_list: List[Tuple[ephem.Body, str]],
             #reset pressure and horizon
             location.pressure = pressure
             location.horizon = 0
-        body_data.append(data)
+        body_data[o.name] = data
     return body_data
 
 def whats_up(start: datetime.datetime, end: datetime.datetime, location: ephem.Observer, magnitude: float = 6.) -> dict:

@@ -468,7 +468,7 @@ router.get(whatsup_regex, async function(req, res, next) {
 /*
 This is specific to LAPO, so no fancy stuff
 */
-router.get('/whatsup_next', async function(req,res,next){
+router.get(/whatsup[_\-]next\/?/, async function(req,res,next){
 	let lat = 37.62218579135644;
 	let lon = -97.62695789337158;
 	let elev = await get_elevation(lat,lon,process.env.GooglePlacesAPIKey);
