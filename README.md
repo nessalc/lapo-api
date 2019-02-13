@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nessalc/lake-afton-api.svg?branch=master)](https://travis-ci.org/nessalc/lake-afton-api)
+
 # Lake Afton API
 An endpoint for getting data about Lake Afton Public Observatory
 http://api.lakeafton.com

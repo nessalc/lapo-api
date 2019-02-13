@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - "node"
+install:
+  - pip install -r requirements.txt
+  - npm install dev
+before_script:
+  - npm start
+script:
+  - npm test
