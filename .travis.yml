@@ -9,6 +9,8 @@ install:
   - pip install -r requirements.txt
   - npm install dev
 before_script:
-  - npm start
+  - npm start &
 script:
   - npm test
+notifications:
+  email: false
