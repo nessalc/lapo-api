@@ -23,7 +23,7 @@ describe('Moon', function() {
     });
     it('should return times of specific altitudes of the moon from a specified location', function(done) {
         server
-            .get(`/moon/${lat}/${lon}`)
+            .get(`/moon/?lat=${lat}&lon=${lon}`)
             .expect('Content-Type', /json/)
             .expect(200)
             .end(function(err, res) {
@@ -34,7 +34,7 @@ describe('Moon', function() {
     });
     it('should return times of specific altitudes of the moon from a specified location with a given timezone', function(done) {
         server
-            .get(`/moon/${lat}/${lon}/${tz}`)
+            .get(`/moon?lat=${lat}&lon=${lon}&tz=${tz}`)
             .expect('Content-Type', /json/)
             .expect(200)
             .end(function(err, res) {

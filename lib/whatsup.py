@@ -93,7 +93,7 @@ def get_data(object_list: List[Tuple[ephem.Body, str]],
         data={
               # Split name if multiple designations are given. The separator is a pipe (|).
               'name': o.name.split('|') if o.name.find('|') >= 0 else o.name,
-              'ra': format_ra(o.ra, True),
+              'ra': format_ra(o.ra),
               'dec': format_angle(o.dec),
               'size': o.size,
               'mag': o.mag,

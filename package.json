@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "startdev": "node ./node_modules/nodemon/bin/nodemon start",
     "test": "node ./node_modules/mocha/bin/mocha --recursive"
   },
   "keywords": [],
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.10",
     "supertest": "^3.4.2"

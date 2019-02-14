@@ -25,7 +25,7 @@ describe('Planets', function() {
     });
     it('should return planets array at a specified location', function(done) {
         server
-            .get(`/planets/${lat}/${lon}`)
+            .get(`/planets?lat=${lat}&lon=${lon}`)
             .expect('Content-Type', /json/)
             .expect(200)
             .end(function(err, res) {
