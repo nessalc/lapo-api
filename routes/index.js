@@ -12,7 +12,7 @@ const {
 } = require('../lib/events');
 const helpers = require('../lib/helpers');
 
-/* GET home page. */
+/* home page. */
 router.get('/', function(req, res, next) {
   const response = {
     message: 'Welcome to the Lake Afton Public Observatory API! To contribute, visit https://github.com/openwichita/lake-afton-api',
@@ -63,6 +63,7 @@ router.get('/hours', function(req, res, next) {
   res.json(response);
 });
 
+/* planets */
 router.get('/planets', async function(req, res, next) {
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
   const lon = parseFloat(req.query.lon) || -97.62695789337158;
@@ -144,6 +145,8 @@ router.get('/planets2', async function(req, res, next) {
   const result = await helpers.pythonCall(data);
   res.json(result);
 });
+
+/* sun */
 router.get('/sun', function(req, res, next) {
   const currentTime = new Date();
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
@@ -212,6 +215,8 @@ router.get('/sun2', async function(req, res, next) {
   const result = await helpers.pythonCall(data);
   res.json(result);
 });
+
+/* moon */
 router.get('/moon', function(req, res, next) {
   const currentTime = new Date();
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
@@ -284,6 +289,8 @@ router.get('/moon2', async function(req, res, next) {
   const result = await helpers.pythonCall(data);
   res.json(result);
 });
+
+/* events */
 router.get('/events', async function(req, res, next) {
   const key = process.env.GoogleCalendarAPIKey;
   const calendarId = process.env.GoogleCalendarId;
@@ -308,6 +315,8 @@ router.get('/events', async function(req, res, next) {
 
   res.json(eventsForDisplay);
 });
+
+/* schedule */
 router.get('/schedule', function(req, res, next) {
   // get the date of the upcoming Sunday, then subtract two days to get the
   // relevant Friday. The schedules are made for "fridays" but they apply for
@@ -332,6 +341,8 @@ router.get('/schedule', function(req, res, next) {
 
   res.json(response);
 });
+
+/* what's up */
 router.get('/whatsup', async function(req, res, next) {
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
   const lon = parseFloat(req.query.lon) || -97.62695789337158;
@@ -428,6 +439,8 @@ router.get(/whatsup[_-]next\/?/, async function(req, res, next) {
   const result = await helpers.pythonCall(data);
   res.json(result);
 });
+
+/* weather */
 router.get('/weather', async function(req, res, next) {
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
   const lon = parseFloat(req.query.lon) || -97.62695789337158;
@@ -436,6 +449,8 @@ router.get('/weather', async function(req, res, next) {
   const reply = await helpers.getWeather(lat, lon, key, tz);
   res.json(reply);
 });
+
+/* forecast */
 router.get('/forecast', async function(req, res, next) {
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
   const lon = parseFloat(req.query.lon) || -97.62695789337158;
