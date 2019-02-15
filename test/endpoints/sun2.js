@@ -23,6 +23,8 @@ describe('Sun 2', function() {
               .that.has.all.keys('query_date', 'Sun');
           res.body.Sun.should.be.an('object')
               .that.has.all.keys('name',
+                  'alt',
+                  'az',
                   'ra',
                   'dec',
                   'size',
@@ -61,6 +63,8 @@ describe('Sun 2', function() {
               .that.has.all.keys('query_date', 'Sun');
           res.body.Sun.should.be.an('object')
               .that.has.all.keys('name',
+                  'alt',
+                  'az',
                   'ra',
                   'dec',
                   'size',

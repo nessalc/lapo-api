@@ -23,6 +23,8 @@ describe('Moon 2', function() {
               .that.has.all.keys('query_date', 'Moon');
           res.body.Moon.should.be.an('object')
               .that.has.all.keys('name',
+                  'alt',
+                  'az',
                   'ra',
                   'dec',
                   'size',
@@ -59,6 +61,8 @@ describe('Moon 2', function() {
               .that.has.all.keys('query_date', 'Moon');
           res.body.Moon.should.be.an('object')
               .that.has.all.keys('name',
+                  'alt',
+                  'az',
                   'ra',
                   'dec',
                   'size',
