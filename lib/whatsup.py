@@ -100,8 +100,8 @@ def get_data(object_list: List[Tuple[ephem.Body, str]],
             'elong': o.elong,
         }
         if location: # altitude and azimuth only available with a valid location
-            data['alt']: format_angle(o.alt)
-            data['az']: format_angle(o.az)
+            data['alt'] = format_angle(o.alt)
+            data['az'] = format_angle(o.az)
         if body_type == 'star': # spectral type is (usually) available with a star body type
             data['spectral_type'] = o._spect
         if body_type == 'solar_system': # special properties available for solar system objects
