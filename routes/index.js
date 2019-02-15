@@ -114,8 +114,8 @@ router.get('/planets2', async function (req, res, next) {
   let tz = req.query.tz || 'America/Chicago'
   let date = moment(req.query.dt).format()
   let key = process.env.OpenWeatherMapAPIKey
-  let elev = await helpers.get_elevation(lat, lon, process.env.GooglePlacesAPIKey)
-  let weatherData = await helpers.get_weather(lat, lon, key)
+  let elev = await helpers.getElevation(lat, lon, process.env.GooglePlacesAPIKey)
+  let weatherData = await helpers.getWeather(lat, lon, key)
   let pressure = weatherData.main.pressure
   let temp = weatherData.main.temp.celsius
   let data = {
@@ -139,7 +139,7 @@ router.get('/planets2', async function (req, res, next) {
   if (req.query.dt) {
     data.date = date
   }
-  let result = await helpers.python_call(data)
+  let result = await helpers.pythonCall(data)
   res.json(result)
 })
 router.get('/sun', function (req, res, next) {
@@ -179,8 +179,8 @@ router.get('/sun2', async function (req, res, next) {
   let tz = req.query.tz || 'America/Chicago'
   let date = moment(req.query.dt).format()
   let key = process.env.OpenWeatherMapAPIKey
-  let elev = await helpers.get_elevation(lat, lon, process.env.GooglePlacesAPIKey)
-  let weatherData = await helpers.get_weather(lat, lon, key)
+  let elev = await helpers.getElevation(lat, lon, process.env.GooglePlacesAPIKey)
+  let weatherData = await helpers.getWeather(lat, lon, key)
   let pressure = weatherData.main.pressure
   let temp = weatherData.main.temp.celsius
   let data = {
@@ -197,7 +197,7 @@ router.get('/sun2', async function (req, res, next) {
   if (req.query.dt) {
     data.date = date
   }
-  let result = await helpers.python_call(data)
+  let result = await helpers.pythonCall(data)
   res.json(result)
 })
 router.get('/moon', function (req, res, next) {
@@ -248,8 +248,8 @@ router.get('/moon2', async function (req, res, next) {
   let tz = req.query.tz || 'America/Chicago'
   let date = moment(req.query.dt).format()
   let key = process.env.OpenWeatherMapAPIKey
-  let elev = await helpers.get_elevation(lat, lon, process.env.GooglePlacesAPIKey)
-  let weatherData = await helpers.get_weather(lat, lon, key)
+  let elev = await helpers.getElevation(lat, lon, process.env.GooglePlacesAPIKey)
+  let weatherData = await helpers.getWeather(lat, lon, key)
   let pressure = weatherData.main.pressure
   let temp = weatherData.main.temp.celsius
   let data = {
@@ -266,7 +266,7 @@ router.get('/moon2', async function (req, res, next) {
   if (req.query.dt) {
     data.date = date
   }
-  let result = await helpers.python_call(data)
+  let result = await helpers.pythonCall(data)
   res.json(result)
 })
 router.get('/events', async function (req, res, next) {
@@ -321,11 +321,11 @@ router.get('/whatsup', async function (req, res, next) {
   let start = moment(req.query.start).format()
   let end = moment(req.query.end).format()
   let key = process.env.OpenWeatherMapAPIKey
-  let elev = await helpers.get_elevation(lat, lon, process.env.GooglePlacesAPIKey)
+  let elev = await helpers.getElevation(lat, lon, process.env.GooglePlacesAPIKey)
   if (moment(start) > moment(end)) {
     end = start
   }
-  let weatherData = await helpers.get_weather(lat, lon, key)
+  let weatherData = await helpers.getWeather(lat, lon, key)
   let pressure = weatherData.main.pressure
   let temp = weatherData.main.temp.celsius
   let data = {
@@ -343,7 +343,7 @@ router.get('/whatsup', async function (req, res, next) {
   if (req.query.end) {
     data.end = end
   }
-  let result = await helpers.python_call(data)
+  let result = await helpers.pythonCall(data)
   res.json(result)
 })
 /*
@@ -352,7 +352,7 @@ This is specific to LAPO, so no fancy stuff
 router.get(/whatsup[_-]next\/?/, async function (req, res, next) {
   let lat = 37.62218579135644
   let lon = -97.62695789337158
-  let elev = await helpers.get_elevation(lat, lon, process.env.GooglePlacesAPIKey)
+  let elev = await helpers.getElevation(lat, lon, process.env.GooglePlacesAPIKey)
   let tz = 'America/Chicago'
   let currentDate = new Date()
   let upcomingSunday = new Date()
@@ -400,7 +400,7 @@ router.get(/whatsup[_-]next\/?/, async function (req, res, next) {
     date: open,
     end: close
   }
-  let result = await helpers.python_call(data)
+  let result = await helpers.pythonCall(data)
   res.json(result)
 })
 router.get('/weather', async function (req, res, next) {
@@ -408,7 +408,7 @@ router.get('/weather', async function (req, res, next) {
   let lon = parseFloat(req.query.lon) || -97.62695789337158
   let tz = req.query.tz || 'America/Chicago'
   let key = process.env.OpenWeatherMapAPIKey
-  let reply = await helpers.get_weather(lat, lon, key, tz)
+  let reply = await helpers.getWeather(lat, lon, key, tz)
   res.json(reply)
 })
 router.get('/forecast', async function (req, res, next) {
@@ -416,7 +416,7 @@ router.get('/forecast', async function (req, res, next) {
   let lon = parseFloat(req.query.lon) || -97.62695789337158
   let tz = req.query.tz || 'America/Chicago'
   let key = process.env.OpenWeatherMapAPIKey
-  let reply = await helpers.get_forecast(lat, lon, key, tz)
+  let reply = await helpers.getForecast(lat, lon, key, tz)
   res.json(reply)
 })
 

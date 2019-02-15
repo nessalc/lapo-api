@@ -11,20 +11,20 @@ describe('Helper Functions', function () {
     describe('Google Places Elevation', function () {
       let key = process.env.GooglePlacesAPIKey
       it('Test 1', function (done) {
-        helpers.get_elevation(37.62218579135644, -97.62695789337158, key).should.eventually.equal(421.9319458007812).notify(done)
+        helpers.getElevation(37.62218579135644, -97.62695789337158, key).should.eventually.equal(421.9319458007812).notify(done)
       })
       it('Test 2', function (done) {
-        helpers.get_elevation(29.55834, 106.56667, key).should.eventually.equal(287.4886169433594).notify(done)
+        helpers.getElevation(29.55834, 106.56667, key).should.eventually.equal(287.4886169433594).notify(done)
       })
     })
     describe('OpenWeatherMap API', function () {
       it('should return current weather conditions from OpenWeather API', function (done) {
         let key = process.env.OpenWeatherMapAPIKey
-        helpers.get_weather(37.62218579135644, -97.62695789337158, key).should.eventually.be.an('object').that.includes.all.keys('coord', 'weather', 'base', 'main', 'visibility', 'wind', 'clouds', 'dt', 'id', 'name').notify(done)
+        helpers.getWeather(37.62218579135644, -97.62695789337158, key).should.eventually.be.an('object').that.includes.all.keys('coord', 'weather', 'base', 'main', 'visibility', 'wind', 'clouds', 'dt', 'id', 'name').notify(done)
       })
       it('should return forecast from OpenWeather API', function (done) {
         let key = process.env.OpenWeatherMapAPIKey
-        helpers.get_forecast(37.62218579135644, -97.62695789337158, key).should.eventually.be.an('object').that.includes.all.keys('city', 'cnt', 'list').notify(done)
+        helpers.getForecast(37.62218579135644, -97.62695789337158, key).should.eventually.be.an('object').that.includes.all.keys('city', 'cnt', 'list').notify(done)
       })
     })
   })
