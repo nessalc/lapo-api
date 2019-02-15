@@ -64,9 +64,9 @@ describe('Helper Functions', function() {
       done();
     });
     it('should convert meters to miles', function(done) {
-      helpers.kmToMi(16093.44).should.equal(10);
-      helpers.kmToMi(10000).should.be.within(6.21, 6.22);
-      helpers.kmToMi(42195).should.be.within(26.21, 26.22);
+      helpers.metersToMiles(16093.44).should.equal(10);
+      helpers.metersToMiles(10000).should.be.within(6.21, 6.22);
+      helpers.metersToMiles(42195).should.be.within(26.21, 26.22);
       done();
     });
   });

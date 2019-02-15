@@ -12,7 +12,7 @@ describe('Forecast', function() {
         .end(function(err, res) {
           if (err) return done(err);
           res.body.should.be.an('object')
-              .that.has.all.keys('cnt', 'list', 'dt', 'city');
+              .that.includes.all.keys('cnt', 'list', 'city');
           done();
         });
   });

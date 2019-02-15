@@ -20,6 +20,10 @@ router.get('/', function(req, res, next) {
   res.json(response);
 });
 
+/* LAPO hours
+
+Returns hours in a "pretty-print" format, as well as an open and close time
+*/
 router.get('/hours', function(req, res, next) {
   const currentTime = new Date();
   const month = currentTime.getMonth() + 1;
@@ -63,7 +67,12 @@ router.get('/hours', function(req, res, next) {
   res.json(response);
 });
 
-/* planets */
+/* planets
+
+Returns a list of all planets visible, their altitude (above the horizon),
+distance from Earth in AU and in miles, visual magnitude, a description of the
+magnitude, and the constellation in which the planet can be found.
+*/
 router.get('/planets', async function(req, res, next) {
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
   const lon = parseFloat(req.query.lon) || -97.62695789337158;
@@ -109,6 +118,33 @@ router.get('/planets', async function(req, res, next) {
     res.json(data);
   }
 });
+/* planets 2
+
+Returns a structure containing the following data on *all* the planets:
+- right ascension
+- declination
+- size (in arcseconds)
+- magnitude
+- elongation
+- altitude
+- azimuth
+- earth distance
+  - au
+  - km
+  - mi
+- constellation
+- sun distance
+  - au
+  - km
+  - mi
+- phase
+- rise time
+- rise azimuth
+- transit time
+- transit altitude
+- set time
+- set azimuth
+*/
 router.get('/planets2', async function(req, res, next) {
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
   const lon = parseFloat(req.query.lon) || -97.62695789337158;
@@ -146,7 +182,14 @@ router.get('/planets2', async function(req, res, next) {
   res.json(result);
 });
 
-/* sun */
+/* sun
+
+Returns a list of certain important times for the position of the sun:
+nadir (local solar midnight), night end (astronomical dawn), astro twilight
+end (end of astronomical twilight/nautical dawn), sunrise, solar noon,
+sunset, astro twilight start (beginning of astronomical twilight/nautical
+dusk), night start (astronomical dusk).
+*/
 router.get('/sun', function(req, res, next) {
   const currentTime = new Date();
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
@@ -165,15 +208,14 @@ router.get('/sun', function(req, res, next) {
     },
   };
   const times = suncalc.getTimes(currentTime, lat, lon);
-  /* Populate JSON construct */
-  /* Future: check if current time is later than displayed time; update
+  /* TODO: check if current time is later than displayed time; update
      to next day's time if this is the case */
   response.times.nadir = moment(times.nadir).tz(tz)
       .format('h:mma z');
   response.times.night_end = moment(times.nightEnd).tz(tz)
       .format('h:mma z');
-  response.times.astro_twilight_end = moment(times.nauticalDawn)
-      .tz(tz).format('h:mma z');
+  response.times.astro_twilight_end = moment(times.nauticalDawn).tz(tz)
+      .format('h:mma z');
   response.times.sunrise = moment(times.sunrise).tz(tz)
       .format('h:mma z');
   response.times.solar_noon = moment(times.solarNoon).tz(tz)
@@ -186,6 +228,40 @@ router.get('/sun', function(req, res, next) {
       .format('h:mma z');
   res.json(response);
 });
+/* sun2
+
+Returns a structure containing the following data on the sun:
+- right ascension
+- declination
+- size (in arcseconds)
+- magnitude (really bright--don't look directly at it)
+- elongation
+- altitude
+- azimuth
+- earth distance
+  - au
+  - km
+  - mi
+- constellation
+- next solstice (date of next solstice)
+- next equinox (date of next equinox)
+- rise time (center of sun crosses horizon)
+- rise azimuth
+- transit time
+- transit altitude
+- set time (center of sun crosses horizon)
+- set azimuth
+- astronomical dawn (sun crosses 18° below horizion)
+- nautical dawn (sun crosses 12° below horizion)
+- civil dawn (sun crosses 6° below horizion)
+- USNO sunrise (sunrise using US Naval Observatory method,
+      sun crosses 0.34° below horizon, no atmospheric refraction included)
+- USNO sunset (sunset using US Naval Observatory method,
+      sun crosses 0.34° below horizon, no atmospheric refraction included)
+- civil dusk (sun crosses 6° below horizion)
+- nautical dusk (sun crosses 12° below horizion)
+- astronomical dusk (sun crosses 18° below horizion)
+*/
 router.get('/sun2', async function(req, res, next) {
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
   const lon = parseFloat(req.query.lon) || -97.62695789337158;
@@ -216,7 +292,10 @@ router.get('/sun2', async function(req, res, next) {
   res.json(result);
 });
 
-/* moon */
+/* moon
+
+Returns times of moonrise, phase, moonset, and illumination percentage
+*/
 router.get('/moon', function(req, res, next) {
   const currentTime = new Date();
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
@@ -232,7 +311,7 @@ router.get('/moon', function(req, res, next) {
   const times = suncalc.getMoonTimes(currentTime, lat, lon);
   const illum = suncalc.getMoonIllumination(currentTime);
   /* Populate JSON construct */
-  /* Future: check if current time is later than displayed time; update
+  /* TODO: check if current time is later than displayed time; update
      to next day's time if this is the case */
   response.moonrise = moment(times.rise).tz(tz).format('h:mma z');
   response.moonset = moment(times.set).tz(tz).format('h:mma z');
@@ -260,6 +339,39 @@ router.get('/moon', function(req, res, next) {
   }
   res.json(response);
 });
+/* moon2
+
+Returns a structure containing the following data on the moon:
+- right ascension
+- declination
+- size (in arcseconds)
+- magnitude
+- elongation
+- altitude
+- azimuth
+- earth distance
+  - au
+  - km
+  - mi
+- constellation
+- sun distance
+  - au
+  - km
+  - mi
+- phase
+- illuminated surface
+- phase name
+- next new moon (date and time)
+- next first quarter (date and time)
+- next full moon (date and time)
+- next last quarter (date and time)
+- rise time (center of moon crosses horizon)
+- rise azimuth
+- transit time
+- transit altitude
+- set time (center of moon crosses horizon)
+- set azimuth
+*/
 router.get('/moon2', async function(req, res, next) {
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
   const lon = parseFloat(req.query.lon) || -97.62695789337158;
@@ -290,7 +402,10 @@ router.get('/moon2', async function(req, res, next) {
   res.json(result);
 });
 
-/* events */
+/* events
+
+Returns a list of upcoming events from the LAPO Google Calendar.
+*/
 router.get('/events', async function(req, res, next) {
   const key = process.env.GoogleCalendarAPIKey;
   const calendarId = process.env.GoogleCalendarId;
@@ -316,18 +431,19 @@ router.get('/events', async function(req, res, next) {
   res.json(eventsForDisplay);
 });
 
-/* schedule */
+/* schedule
+
+Get the date of the upcoming Sunday, then subtract two days to get the
+relevant Friday. The schedules are made for "Fridays" but they apply for
+both Friday and Saturday, so if someone requests the schedule on
+Saturday, we need to get the schedule that's made for "yesterday" but
+if they request on a Thursday, we need to get it for "tomorrow"--so
+we use the next Sunday, minus two days to get that. Math'd.
+
+The schedule lives in /lib/viewingSchedule and is manually generated by
+minions
+*/
 router.get('/schedule', function(req, res, next) {
-  // get the date of the upcoming Sunday, then subtract two days to get the
-  // relevant Friday. The schedules are made for "fridays" but they apply for
-  // both Friday and Saturday, so if someone requests the schedule on
-  // Saturday, we need to get the schedule that's made for "yesterday" but
-  // if they request on a Thursday, we need to get it for "tomorrow" -- so
-  // we use the next Sunday, minus two days to get that. Math'd.
-
-  // the schedule lives in /lib/viewingSchedule and is manually generated
-  // with by minions
-
   const upcomingSunday = new Date();
   upcomingSunday.setDate(upcomingSunday.getDate()
     + (0 + 7 - upcomingSunday.getDay()) % 7);
@@ -342,7 +458,12 @@ router.get('/schedule', function(req, res, next) {
   res.json(response);
 });
 
-/* what's up */
+/* what's up
+
+Returns a list of objects in the sky above a limiting magnitude. Each item
+also includes the magnitude, rise time and set time (if applicable), sorted
+by magnitude from brightest to dimmest.
+*/
 router.get('/whatsup', async function(req, res, next) {
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
   const lon = parseFloat(req.query.lon) || -97.62695789337158;
@@ -377,8 +498,12 @@ router.get('/whatsup', async function(req, res, next) {
   const result = await helpers.pythonCall(data);
   res.json(result);
 });
-/*
-This is specific to LAPO, so no fancy stuff
+/* whatsup-next
+
+Returns a list of objects that will be in the sky during the upcoming open
+hours of LAPO, above a limiting magnitude. Each item also includes the
+magnitude, rise time and set time (if applicable), sorted by magnitude from
+brightest to dimmest.
 */
 router.get(/whatsup[_-]next\/?/, async function(req, res, next) {
   const lat = 37.62218579135644;
@@ -440,7 +565,15 @@ router.get(/whatsup[_-]next\/?/, async function(req, res, next) {
   res.json(result);
 });
 
-/* weather */
+/* weather
+
+Returns current weather conditions, including a description of current
+conditions (e.g. light snow), temperature (in degrees Celsius and degrees
+Fahrenheit), feels like temperature (wind chill/heat index, if applicable),
+min and max temperatures for the area, barometric pressure in millibars,
+relative humidity, visibility (in kilometers and miles), wind speed (in meters
+per second and miles per hour) and direction, cloud cover in percentage
+*/
 router.get('/weather', async function(req, res, next) {
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
   const lon = parseFloat(req.query.lon) || -97.62695789337158;
@@ -450,7 +583,17 @@ router.get('/weather', async function(req, res, next) {
   res.json(reply);
 });
 
-/* forecast */
+/* forecast
+
+Returns weather forecast at 3 hour intervals, including a description of
+current conditions (e.g. light snow), temperature (in degrees Celsius and
+degrees Fahrenheit), feels like temperature (wind chill/heat index, if
+applicable), min and max temperatures for the area, barometric pressure in
+millibars, relative humidity, visibility (in kilometers and miles), wind speed
+(in meters per second and miles per hour) and direction, cloud cover in
+percentage. May include amount of anticipated precipitation in mm (snow water
+equivalent for snow).
+*/
 router.get('/forecast', async function(req, res, next) {
   const lat = parseFloat(req.query.lat) || 37.62218579135644;
   const lon = parseFloat(req.query.lon) || -97.62695789337158;
