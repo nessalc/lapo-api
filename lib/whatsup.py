@@ -1,5 +1,6 @@
 """A series of functions to use PyEphem for lake-afton-api."""
 
+from typing import Optional, Union, Tuple, NoReturn, List
 import sys
 import json
 import datetime
@@ -7,12 +8,11 @@ import ephem
 import pytz
 import dateutil.parser
 import celestial_objects
-from typing import Optional, Union, Tuple, NoReturn, List
 
-time_format = '%Y-%m-%dT%H:%M:%S%z'
-default_tz = 'America/Chicago'
+TIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
+DEFAULT_TZ = 'America/Chicago'
 
-object_dict = celestial_objects.get_objects([
+OBJECT_DICT = celestial_objects.get_objects([
     ('./lib/messier.txt', None),
     ('./lib/caldwell.txt', None),
     ('./lib/stars.txt', 'star'),
@@ -23,7 +23,7 @@ object_dict = celestial_objects.get_objects([
 
 def read_in() -> dict:
     """Read parameters from node call."""
-    lines=sys.stdin.readlines()
+    lines = sys.stdin.readlines()
     return json.loads(lines[0])
 
 def get_location(lat: float,
@@ -90,28 +90,36 @@ def get_data(object_list: List[Tuple[ephem.Body, str]],
             o.compute(location)
         else:
             o.compute()
-        data={
-              # Split name if multiple designations are given. The separator is a pipe (|).
-              'name': o.name.split('|') if o.name.find('|') >= 0 else o.name,
-              'ra': format_ra(o.ra),
-              'dec': format_angle(o.dec),
-              'size': o.size,
-              'mag': o.mag,
-              'elong': o.elong,
-             }
+        data = {
+            # Split name if multiple designations are given. The separator is a pipe (|).
+            'name': o.name.split('|') if o.name.find('|') >= 0 else o.name,
+            'ra': format_ra(o.ra),
+            'dec': format_angle(o.dec),
+            'size': o.size,
+            'mag': o.mag,
+            'elong': o.elong,
+        }
         if location: # altitude and azimuth only available with a valid location
             data['alt']: format_angle(o.alt)
             data['az']: format_angle(o.az)
         if body_type == 'star': # spectral type is (usually) available with a star body type
             data['spectral_type'] = o._spect
         if body_type == 'solar_system': # special properties available for solar system objects
-            data['earth_dist'] = {'au': o.earth_distance, 'km': o.earth_distance * 149597870.700, 'mi': o.earth_distance * 149597870700 / 1604.344}
+            data['earth_dist'] = {
+                'au': o.earth_distance,
+                'km': o.earth_distance * 149597870.700,
+                'mi': o.earth_distance * 149597870700 / 1604.344
+            }
             data['constellation'] = ephem.constellation(o)
             # date for calculations below
             date = location.date if location else ephem.now()
             if o.name != 'Sun': # we don't need "phase" or "sun_dist" for the sun itself
-                data['sun_dist'] = {'au': o.sun_distance, 'km': o.sun_distance * 149597870.700, 'mi': o.sun_distance * 149597870700 / 1604.344}
-                data['phase']=o.phase
+                data['sun_dist'] = {
+                    'au': o.sun_distance,
+                    'km': o.sun_distance * 149597870.700,
+                    'mi': o.sun_distance * 149597870700 / 1604.344
+                }
+                data['phase'] = o.phase
             if o.name == 'Moon': # special properties available for the moon
                 data['illuminated_surface'] = o.moon_phase * 100
                 data['phase_name'] = get_phase_name(location)
@@ -153,17 +161,22 @@ def get_data(object_list: List[Tuple[ephem.Body, str]],
         if o.name == 'Sun':
             # computed last, since these calculations change the horizon
             location.horizon = '-18'
-            astro_dawn, astro_dusk=location.next_rising(o, start = antitransit), location.next_setting(o, start = antitransit)
+            astro_dawn = location.next_rising(o, start = antitransit)
+            astro_dusk = location.next_setting(o, start = antitransit)
             location.horizon = '-12'
-            nautical_dawn, nautical_dusk=location.next_rising(o, start = antitransit), location.next_setting(o, start = antitransit)
+            nautical_dawn  = location.next_rising(o, start = antitransit)
+            nautical_dusk = location.next_setting(o, start = antitransit)
             location.horizon = '-6'
-            civil_dawn, civil_dusk=location.next_rising(o, start = antitransit), location.next_setting(o, start = antitransit)
-            # The US Naval Observatory uses -34' as a constant for sunrise/sunset, rather than using atmospheric refraction.
+            civil_dawn = location.next_rising(o, start = antitransit)
+            civil_dusk = location.next_setting(o, start = antitransit)
+            # The US Naval Observatory uses -34' as a constant for sunrise/sunset,
+            # rather than using atmospheric refraction.
             # Setting pressure to 0 has the effect of ignoring effects of refraction.
             # Save pressure for reset after calculations.
             pressure, location.pressure = location.pressure, 0
             location.horizon = '-0:34'
-            usno_dawn, usno_dusk=location.next_rising(o, start = antitransit), location.next_setting(o, start = antitransit)
+            usno_dawn = location.next_rising(o, start = antitransit)
+            usno_dusk = location.next_setting(o, start = antitransit)
             data['astronomical_dawn'] = astro_dawn.datetime()
             data['nautical_dawn'] = nautical_dawn.datetime()
             data['civil_dawn'] = civil_dawn.datetime()
@@ -178,12 +191,20 @@ def get_data(object_list: List[Tuple[ephem.Body, str]],
         body_data[o.name] = data
     return body_data
 
-def whats_up(start: datetime.datetime, end: datetime.datetime, location: ephem.Observer, magnitude: float = 6.) -> dict:
-    """Find all objects that will be "up" between start and end time, from given location, with visibility greater than provided magnitude."""
+def whats_up(
+        start: datetime.datetime,
+        end: datetime.datetime,
+        location: ephem.Observer,
+        magnitude: float = 6.) -> dict:
+    """
+    Find all objects that will be "up" between start and end time.
+
+    Takes a location, start and end time, and limiting magnitude.
+    """
     body_list = []
     start_e, end_e = ephem.Date(start), ephem.Date(end)
     location.date = start_e
-    for o,body_type in filter(lambda x: x[1] != 'planetary_moon', object_dict.values()):
+    for o,body_type in filter(lambda x: x[1] != 'planetary_moon', OBJECT_DICT.values()):
         o.compute(location)
         circumpolar = False
         rising, setting = None, None
@@ -211,7 +232,8 @@ def whats_up(start: datetime.datetime, end: datetime.datetime, location: ephem.O
         if o.mag < magnitude and (circumpolar or \
                                   (rising and start_e < rising < end_e) or \
                                   (setting and start_e < setting < end_e) or \
-                                  (rising and setting and (rising < start_e) and (setting > end_e))):
+                                  (rising and setting and (rising < start_e) and \
+                                      (setting > end_e))):
             # If it's in the sky and bright enough, add the entry to the list
             if rising or setting or circumpolar:
                 body_list.append({
@@ -239,13 +261,17 @@ def get_phase_name(location: Optional[ephem.Observer] = None, wiggle_room: float
         date = location.date
     else:
         date = ephem.now()
-    if abs(ephem.next_first_quarter_moon(date) - date) < wiggle_room or abs(ephem.previous_first_quarter_moon(date) - date) < wiggle_room:
+    if abs(ephem.next_first_quarter_moon(date) - date) < wiggle_room or \
+            abs(ephem.previous_first_quarter_moon(date) - date) < wiggle_room:
         return 'first quarter moon'
-    elif abs(ephem.next_full_moon(date) - date) < wiggle_room or abs(ephem.previous_full_moon(date) - date) < wiggle_room:
+    elif abs(ephem.next_full_moon(date) - date) < wiggle_room or \
+            abs(ephem.previous_full_moon(date) - date) < wiggle_room:
         return 'full moon'
-    elif abs(ephem.next_last_quarter_moon(date) - date) < wiggle_room or abs(ephem.previous_last_quarter_moon(date) - date) < wiggle_room:
+    elif abs(ephem.next_last_quarter_moon(date) - date) < wiggle_room or \
+            abs(ephem.previous_last_quarter_moon(date) - date) < wiggle_room:
         return 'last quarter moon'
-    elif abs(ephem.next_new_moon(date) - date) < wiggle_room or abs(ephem.previous_new_moon(date) - date) < wiggle_room:
+    elif abs(ephem.next_new_moon(date) - date) < wiggle_room or \
+            abs(ephem.previous_new_moon(date) - date) < wiggle_room:
         return 'new moon'
     elif ephem.next_first_quarter_moon(date) - ephem.previous_new_moon(date) < 29:
         return 'waxing crescent'
@@ -255,6 +281,7 @@ def get_phase_name(location: Optional[ephem.Observer] = None, wiggle_room: float
         return 'waning gibbous'
     elif ephem.next_new_moon(date) - ephem.previous_last_quarter_moon(date) < 29:
         return 'waning crescent'
+    return ''
 
 class Encoder(json.JSONEncoder):
     """JSON Encoder to serialize datetime objects."""
@@ -266,8 +293,8 @@ class Encoder(json.JSONEncoder):
             if obj.tzinfo is None or obj.tzinfo.utcoffset(obj) is None:
                 obj = pytz.utc.localize(obj)
             if tz is not None:
-                return obj.astimezone(pytz.timezone(tz)).strftime(time_format)
-            return obj.strftime(time_format)
+                return obj.astimezone(pytz.timezone(tz)).strftime(TIME_FORMAT)
+            return obj.strftime(TIME_FORMAT)
         return json.JSONEncoder.default(self, obj)
 
 def main() -> NoReturn:
@@ -279,7 +306,7 @@ def main() -> NoReturn:
     elev = data['elev'] if 'elev' in data.keys() else None
     horizon = data['horizon'] if 'horizon' in data.keys() else None
     date = data['date'] if 'date' in data.keys() else datetime.datetime.now()
-    tz = data['tz'] if 'tz' in data.keys() else default_tz
+    tz = data['tz'] if 'tz' in data.keys() else DEFAULT_TZ
     temp = data['temp'] if 'temp' in data.keys() else 25
     pressure = data['pressure'] if 'pressure' in data.keys() else None
     if isinstance(date, str):
@@ -301,8 +328,8 @@ def main() -> NoReturn:
         location=None
     try:
         query_set = set(map(str.lower, data['body']))
-        query_set = query_set.intersection(set(object_dict.keys()))
-        query_list = list(map(lambda x: object_dict[x], query_set))
+        query_set = query_set.intersection(set(OBJECT_DICT.keys()))
+        query_list = list(map(lambda x: OBJECT_DICT[x], query_set))
         info = get_data(query_list, location)
     except KeyError:
         if location:
@@ -312,6 +339,6 @@ def main() -> NoReturn:
         else:
             info='nothing'
     print(json.dumps(info, cls = Encoder))
-    
+
 if __name__ == '__main__':
     main()
