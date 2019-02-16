@@ -71,10 +71,9 @@ magnitude, and the constellation in which the planet can be found.
 */
 router.get('/planets', async function(req, res, next) {
   const qs = helpers.parseQueryString(req.query);
-  const lat = parseFloat(qs.lat) || 37.62218579135644;
-  const lon = parseFloat(qs.lon) || -97.62695789337158;
-  const fiveMinutes = 5 * 60 * 60 * 1000;
-  const data = await astropical.getPlanetEphem(lat, lon, fiveMinutes);
+  const lat = qs.lat || 37.62218579135644;
+  const lon = qs.lon || -97.62695789337158;
+  const data = await astropical.getPlanetEphem(lat, lon);
   // now we have the data
   const planets = data.response;
   if (planets !== undefined) {
@@ -191,8 +190,8 @@ dusk), night start (astronomical dusk).
 router.get('/sun', function(req, res, next) {
   const qs = helpers.parseQueryString(req.query);
   const currentTime = new Date();
-  const lat = parseFloat(qs.lat) || 37.62218579135644;
-  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const lat = qs.lat || 37.62218579135644;
+  const lon = qs.lon || -97.62695789337158;
   const tz = qs.tz || 'America/Chicago';
   const response = {
     times: {
@@ -263,8 +262,8 @@ Returns a structure containing the following data on the sun:
 */
 router.get('/sun2', async function(req, res, next) {
   const qs = helpers.parseQueryString(req.query);
-  const lat = parseFloat(qs.lat) || 37.62218579135644;
-  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const lat = qs.lat || 37.62218579135644;
+  const lon = qs.lon || -97.62695789337158;
   const tz = qs.tz || 'America/Chicago';
   const date = moment(qs.dt).format();
   const key = process.env.OpenWeatherMapAPIKey;
@@ -299,8 +298,8 @@ Returns times of moonrise, phase, moonset, and illumination percentage
 router.get('/moon', function(req, res, next) {
   const qs = helpers.parseQueryString(req.query);
   const currentTime = new Date();
-  const lat = parseFloat(qs.lat) || 37.62218579135644;
-  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const lat = qs.lat || 37.62218579135644;
+  const lon = qs.lon || -97.62695789337158;
   const tz = qs.tz || 'America/Chicago';
   const lazy = 0.03;
   const response = {
@@ -375,8 +374,8 @@ Returns a structure containing the following data on the moon:
 */
 router.get('/moon2', async function(req, res, next) {
   const qs = helpers.parseQueryString(req.query);
-  const lat = parseFloat(qs.lat) || 37.62218579135644;
-  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const lat = qs.lat || 37.62218579135644;
+  const lon = qs.lon || -97.62695789337158;
   const tz = qs.tz || 'America/Chicago';
   const date = moment(qs.dt).format();
   const key = process.env.OpenWeatherMapAPIKey;
@@ -411,8 +410,7 @@ Returns a list of upcoming events from the LAPO Google Calendar.
 router.get('/events', async function(req, res, next) {
   const key = process.env.GoogleCalendarAPIKey;
   const calendarId = process.env.GoogleCalendarId;
-  const fiveMinutes = 5 * 60 * 60 * 1000;
-  const data = await getEvents(calendarId, key, fiveMinutes);
+  const data = await getEvents(calendarId, key);
 
   const events = data.items;
   const eventsForDisplay = [];
@@ -468,8 +466,8 @@ by magnitude from brightest to dimmest.
 */
 router.get('/whatsup', async function(req, res, next) {
   const qs = helpers.parseQueryString(req.query);
-  const lat = parseFloat(qs.lat) || 37.62218579135644;
-  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const lat = qs.lat || 37.62218579135644;
+  const lon = qs.lon || -97.62695789337158;
   const tz = qs.tz || 'America/Chicago';
   const start = moment(qs.start).format();
   let end = moment(qs.end).format();
