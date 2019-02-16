@@ -12,7 +12,7 @@ describe('Weather', function() {
         .end(function(err, res) {
           if (err) return done(err);
           res.body.should.be.an('object')
-              .that.has.all.keys('coord',
+              .that.includes.all.keys('coord',
                   'weather',
                   'base',
                   'main',
