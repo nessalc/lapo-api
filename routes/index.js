@@ -4,12 +4,8 @@ const router = express.Router(); // eslint-disable-line new-cap
 const suncalc = require('suncalc');
 const moment = require('moment-timezone');
 const viewingSchedule = require('../lib/viewingSchedule');
-const {
-  getPlanetEphem,
-} = require('../lib/astropical');
-const {
-  getEvents,
-} = require('../lib/events');
+const astropical = require('../lib/astropical');
+const getEvents = require('../lib/events');
 const helpers = require('../lib/helpers');
 
 /* home page. */
@@ -74,10 +70,11 @@ distance from Earth in AU and in miles, visual magnitude, a description of the
 magnitude, and the constellation in which the planet can be found.
 */
 router.get('/planets', async function(req, res, next) {
-  const lat = parseFloat(req.query.lat) || 37.62218579135644;
-  const lon = parseFloat(req.query.lon) || -97.62695789337158;
+  const qs = helpers.parseQueryString(req.query);
+  const lat = parseFloat(qs.lat) || 37.62218579135644;
+  const lon = parseFloat(qs.lon) || -97.62695789337158;
   const fiveMinutes = 5 * 60 * 60 * 1000;
-  const data = await getPlanetEphem(lat, lon, fiveMinutes);
+  const data = await astropical.getPlanetEphem(lat, lon, fiveMinutes);
   // now we have the data
   const planets = data.response;
   if (planets !== undefined) {
@@ -146,10 +143,11 @@ Returns a structure containing the following data on *all* the planets:
 - set azimuth
 */
 router.get('/planets2', async function(req, res, next) {
-  const lat = parseFloat(req.query.lat) || 37.62218579135644;
-  const lon = parseFloat(req.query.lon) || -97.62695789337158;
-  const tz = req.query.tz || 'America/Chicago';
-  const date = moment(req.query.dt).format();
+  const qs = helpers.parseQueryString(req.query);
+  const lat = qs.lat || 37.62218579135644;
+  const lon = qs.lon || -97.62695789337158;
+  const tz = qs.tz || 'America/Chicago'; // eslint-disable-line max-len
+  const date = qs.dt;
   const key = process.env.OpenWeatherMapAPIKey;
   const elev = await helpers.getElevation(lat,
       lon,
@@ -175,7 +173,7 @@ router.get('/planets2', async function(req, res, next) {
     pressure: pressure,
     temp: temp,
   };
-  if (req.query.dt) {
+  if (qs.dt) {
     data.date = date;
   }
   const result = await helpers.pythonCall(data);
@@ -191,10 +189,11 @@ sunset, astro twilight start (beginning of astronomical twilight/nautical
 dusk), night start (astronomical dusk).
 */
 router.get('/sun', function(req, res, next) {
+  const qs = helpers.parseQueryString(req.query);
   const currentTime = new Date();
-  const lat = parseFloat(req.query.lat) || 37.62218579135644;
-  const lon = parseFloat(req.query.lon) || -97.62695789337158;
-  const tz = req.query.tz || 'America/Chicago';
+  const lat = parseFloat(qs.lat) || 37.62218579135644;
+  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const tz = qs.tz || 'America/Chicago';
   const response = {
     times: {
       nadir: '',
@@ -263,10 +262,11 @@ Returns a structure containing the following data on the sun:
 - astronomical dusk (sun crosses 18° below horizion)
 */
 router.get('/sun2', async function(req, res, next) {
-  const lat = parseFloat(req.query.lat) || 37.62218579135644;
-  const lon = parseFloat(req.query.lon) || -97.62695789337158;
-  const tz = req.query.tz || 'America/Chicago';
-  const date = moment(req.query.dt).format();
+  const qs = helpers.parseQueryString(req.query);
+  const lat = parseFloat(qs.lat) || 37.62218579135644;
+  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const tz = qs.tz || 'America/Chicago';
+  const date = moment(qs.dt).format();
   const key = process.env.OpenWeatherMapAPIKey;
   const elev = await helpers.getElevation(lat,
       lon,
@@ -285,7 +285,7 @@ router.get('/sun2', async function(req, res, next) {
     pressure: pressure,
     temp: temp,
   };
-  if (req.query.dt) {
+  if (qs.dt) {
     data.date = date;
   }
   const result = await helpers.pythonCall(data);
@@ -297,10 +297,11 @@ router.get('/sun2', async function(req, res, next) {
 Returns times of moonrise, phase, moonset, and illumination percentage
 */
 router.get('/moon', function(req, res, next) {
+  const qs = helpers.parseQueryString(req.query);
   const currentTime = new Date();
-  const lat = parseFloat(req.query.lat) || 37.62218579135644;
-  const lon = parseFloat(req.query.lon) || -97.62695789337158;
-  const tz = req.query.tz || 'America/Chicago';
+  const lat = parseFloat(qs.lat) || 37.62218579135644;
+  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const tz = qs.tz || 'America/Chicago';
   const lazy = 0.03;
   const response = {
     moonrise: '',
@@ -373,10 +374,11 @@ Returns a structure containing the following data on the moon:
 - set azimuth
 */
 router.get('/moon2', async function(req, res, next) {
-  const lat = parseFloat(req.query.lat) || 37.62218579135644;
-  const lon = parseFloat(req.query.lon) || -97.62695789337158;
-  const tz = req.query.tz || 'America/Chicago';
-  const date = moment(req.query.dt).format();
+  const qs = helpers.parseQueryString(req.query);
+  const lat = parseFloat(qs.lat) || 37.62218579135644;
+  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const tz = qs.tz || 'America/Chicago';
+  const date = moment(qs.dt).format();
   const key = process.env.OpenWeatherMapAPIKey;
   const elev = await helpers.getElevation(lat,
       lon,
@@ -395,7 +397,7 @@ router.get('/moon2', async function(req, res, next) {
     pressure: pressure,
     temp: temp,
   };
-  if (req.query.dt) {
+  if (qs.dt) {
     data.date = date;
   }
   const result = await helpers.pythonCall(data);
@@ -465,11 +467,12 @@ also includes the magnitude, rise time and set time (if applicable), sorted
 by magnitude from brightest to dimmest.
 */
 router.get('/whatsup', async function(req, res, next) {
-  const lat = parseFloat(req.query.lat) || 37.62218579135644;
-  const lon = parseFloat(req.query.lon) || -97.62695789337158;
-  const tz = req.query.tz || 'America/Chicago';
-  const start = moment(req.query.start).format();
-  let end = moment(req.query.end).format();
+  const qs = helpers.parseQueryString(req.query);
+  const lat = parseFloat(qs.lat) || 37.62218579135644;
+  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const tz = qs.tz || 'America/Chicago';
+  const start = moment(qs.start).format();
+  let end = moment(qs.end).format();
   const key = process.env.OpenWeatherMapAPIKey;
   const elev = await helpers.getElevation(lat,
       lon,
@@ -489,10 +492,10 @@ router.get('/whatsup', async function(req, res, next) {
     pressure: pressure,
     temp: temp,
   };
-  if (req.query.start) {
+  if (qs.start) {
     data.date = start;
   }
-  if (req.query.end) {
+  if (qs.end) {
     data.end = end;
   }
   const result = await helpers.pythonCall(data);
@@ -575,9 +578,10 @@ relative humidity, visibility (in kilometers and miles), wind speed (in meters
 per second and miles per hour) and direction, cloud cover in percentage
 */
 router.get('/weather', async function(req, res, next) {
-  const lat = parseFloat(req.query.lat) || 37.62218579135644;
-  const lon = parseFloat(req.query.lon) || -97.62695789337158;
-  const tz = req.query.tz || 'America/Chicago';
+  const qs = helpers.parseQueryString(req.query);
+  const lat = parseFloat(qs.lat) || 37.62218579135644;
+  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const tz = qs.tz || 'America/Chicago';
   const key = process.env.OpenWeatherMapAPIKey;
   const reply = await helpers.getWeather(lat, lon, key, tz);
   res.json(reply);
@@ -595,9 +599,10 @@ percentage. May include amount of anticipated precipitation in mm (snow water
 equivalent for snow).
 */
 router.get('/forecast', async function(req, res, next) {
-  const lat = parseFloat(req.query.lat) || 37.62218579135644;
-  const lon = parseFloat(req.query.lon) || -97.62695789337158;
-  const tz = req.query.tz || 'America/Chicago';
+  const qs = helpers.parseQueryString(req.query);
+  const lat = parseFloat(qs.lat) || 37.62218579135644;
+  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const tz = qs.tz || 'America/Chicago';
   const key = process.env.OpenWeatherMapAPIKey;
   const reply = await helpers.getForecast(lat, lon, key, tz);
   res.json(reply);

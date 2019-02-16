@@ -40,11 +40,13 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
     * ***Parameter Notes:***
         * `lat` is latitude in degrees, positive for north, negative for south. DMS format is not accepted--must be in decimal degrees (e.g. 37.6222 rather than 37°37'19.8688")
         * `lon` is longitude in degrees, positive for east, negative for west. DMS format is not accepted--must be in decimal degrees (e.g. -97.6270 rather than -97°37'37.0484")
-        * `timestamp` is a timestamp in a very particular format: YYYY-MM-DDThh:mm:ss±hhmm. YYYY is the year; negative values are acceptable but behavior may not be predictable. MM and DD are the month and day, respectively, and must be entered as two digit values. hh is the hour in a 24-hour format, and must be entered with two digits. mm and ss are minutes and seconds, respectively. Decimals may be added to seconds to increase precision, but output will only be to the whole second. ±hhmm specifies the timezone offset of the timestamp. This must be entered with a sign (+ or -) and four digits: the hours and minutes each as two digits. An alternative is the letter Z, denoting UTC. All parameters are required at this time.
-        * `timezone` is a timezone in the format of the Olson database for the output of the query. Default is 'America/Chicago'. Currently all formats are allowed, but in the future only canonical names and aliases may be accepted (ability to recognize deprecated names will be removed).
+        * `dt` is a timestamp in a very particular format: YYYY-MM-DDThh:mm:ss±hhmm. YYYY is the year; negative values are acceptable but behavior may not be predictable. MM and DD are the month and day, respectively, and must be entered as two digit values. hh is the hour in a 24-hour format, and must be entered with two digits. mm and ss are minutes and seconds, respectively. Decimals may be added to seconds to increase precision, but output will only be to the whole second. ±hhmm specifies the timezone offset of the timestamp. This must be entered with a sign (+ or -) and four digits: the hours and minutes each as two digits. An alternative is the letter Z, denoting UTC. All parameters are required at this time.
+        * `tz` is a timezone in the format of the Olson database for the output of the query. Default is 'America/Chicago'. Currently all formats are allowed, but in the future only canonical names and aliases may be accepted (ability to recognize deprecated names will be removed).
+        * Parameters are entered as a standard query string, e.g. `/whatsup/?key1=value1&key2=value2`. Order among different keys is unimportant. If a key is dupicated, only the *last* value associated with a key will be utilized. If a value is inappropriate for the type, it will be ignored and the default will be used. The program does its best to decide what you meant, but typos can still cause unexpected issues.
     * GET `/planets` -- returns planets that are visible right now
-        * Additional Parameterized URLs:
-            * `/planets/lat/lon`
+        * Valid parameters (defaults):
+            * `lat` (37.62218579135644)
+            * `lon` (-97.62695789337158)
     * GET `/planets2` -- returns the following information about *all* planets:
         * current right ascension/declination
         * current size (diameter in arcseconds)
@@ -56,15 +58,16 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
         * rise time/rise azimuth
         * transit time/transit altitude
         * set time/set azimuth, 
-        * Additional Parameterized URLs:
-            * `/planets2/lat/lon`
-            * `/planets2/lat/lon/timezone`
-            * `/planets2/lat/lon/timestamp`
-            * `/planets2/lat/lon/timestamp/timezone`
+        * Valid parameters (defaults):
+            * `lat` (37.62218579135644)
+            * `lon` (-97.62695789337158)
+            * `tz` (America/Chicago)
+            * `dt` (now)
     * GET `/sun` -- returns sunrise, sunset, twilight, and dusk information
-        * Additional Parameterized URLs:
-            * `/sun/lat/lon`
-            * `/sun/lat/lon/timezone`
+        * Valid parameters (defaults):
+            * `lat` (37.62218579135644)
+            * `lon` (-97.62695789337158)
+            * `tz` (America/Chicago)
     * GET `/sun2` -- returns the following information about the sun (based on the current date and time):
         * right ascension/declination
         * size (diameter in arcseconds)
@@ -76,15 +79,16 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
         * rise time/rise azimuth
         * transit time/transit altitude
         * set time/set azimuth, 
-        * Additional Parameterized URLs:
-            * `/sun2/lat/lon`
-            * `/sun2/lat/lon/timezone`
-            * `/sun2/lat/lon/timestamp`
-            * `/sun2/lat/lon/timestamp/timezone`
+        * Valid parameters (defaults):
+            * `lat` (37.62218579135644)
+            * `lon` (-97.62695789337158)
+            * `tz` (America/Chicago)
+            * `dt` (now)
     * GET `/moon` -- returns moonrise, moonset, and phase of the moon
-        * Additional Parameterized URLs:
-            * `/moon/lat/lon`
-            * `/moon/lat/lon/timezone`
+        * Valid parameters (defaults):
+            * `lat` (37.62218579135644)
+            * `lon` (-97.62695789337158)
+            * `tz` (America/Chicago)
     * GET `/moon2` -- returns the following information about the moon (based on the current date and time):
         * right ascension/declination
         * size (diameter in arcseconds)
@@ -102,19 +106,17 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
         * rise time/rise azimuth
         * transit time/transit altitude
         * set time/set azimuth
-        * Additional Parameterized URLs:
-            * `/moon2/lat/lon`
-            * `/moon2/lat/lon/timezone`
-            * `/moon2/lat/lon/timestamp`
-            * `/moon2/lat/lon/timestamp/timezone`
+        * Valid parameters (defaults):
+            * `lat` (37.62218579135644)
+            * `lon` (-97.62695789337158)
+            * `tz` (America/Chicago)
+            * `dt` (now)
     * GET `/whatsup` -- return names of objects brighter than magnitude 6 (see [here](objects.md) for list of objects)
-        * Additional Parameterized URLs:
-            * `/whatsup/lat/lon`
-            * `/whatsup/lat/lon/timezone`
-            * `/whatsup/lat/lon/timestamp`
-            * `/whatsup/lat/lon/timestamp/timezone`
-            * `/whatsup/lat/lon/timestamp/timestamp`
-            * `/whatsup/lat/lon/timestamp/timestamp/timezone`
-            * ***Parameter Note:*** Where two timestamps are listed above, these denote start and end times.
+        * Valid parameters (defaults):
+            * `lat` (37.62218579135644)
+            * `lon` (-97.62695789337158)
+            * `tz` (America/Chicago)
+            * `start` (now)
+            * `end` (now)
 
 ***One more note:*** the data provided at these endpoints is probably more than enough to get a hobbyist started, to at least get an object of interest in a finder scope. And while these numbers are at least mostly accurate, don't try to steer Hubble or launch a rocket to Neptune with them.

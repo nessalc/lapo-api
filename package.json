@@ -16,9 +16,9 @@
     "express": "~4.16.4",
     "moment-timezone": "^0.5.23",
     "morgan": "^1.9.1",
+    "node-fetch": "^2.3.0",
     "p-memoize": "^2.1.0",
     "python-shell": "^1.0.7",
-    "simple-fetch-cache": "^1.4.0",
     "suncalc": "^1.8.0"
   },
   "devDependencies": {
@@ -26,7 +26,6 @@
     "chai-as-promised": "^7.1.1",
     "eslint": "^5.13.0",
     "eslint-config-google": "^0.12.0",
-    "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-promise": "^4.0.1",
