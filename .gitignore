@@ -59,3 +59,14 @@ typings/
 
 # next.js build output
 .next
+
+# python compiled cache
+__pycache__
+*.pyc
+
+lib/sfwhatsup.py
+lib/skyfield_data/*
+.vscode
+*.sqlite
+keys.js
+.jsbeautifyrc
