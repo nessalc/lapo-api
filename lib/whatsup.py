@@ -1,6 +1,6 @@
 """A series of functions to use PyEphem for lake-afton-api."""
 
-from typing import Optional, Union, Tuple, NoReturn, List
+from typing import Optional, Union, Tuple, List
 import sys
 import json
 import datetime
@@ -297,7 +297,7 @@ class Encoder(json.JSONEncoder):
             return obj.strftime(TIME_FORMAT)
         return json.JSONEncoder.default(self, obj)
 
-def main() -> NoReturn:
+def main():
     """Process arguments."""
     global tz
     data = read_in()
