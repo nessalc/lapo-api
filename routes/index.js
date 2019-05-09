@@ -445,8 +445,7 @@ minions
 */
 router.get('/schedule', function(req, res, next) {
   const upcomingSunday = new Date();
-  upcomingSunday.setDate(upcomingSunday.getDate()
-    + (0 + 7 - upcomingSunday.getDay()) % 7);
+  upcomingSunday.setDate(upcomingSunday.getDate() + (0 + 7 - upcomingSunday.getDay()) % 7);
   // let upcomingSundayFormatted = moment(upcomingSunday).format('MM-DD-YYYY');
   const relevantFriday = moment(upcomingSunday).subtract(2, 'days');
   const relevantFridayFormatted = moment(relevantFriday).format('MM-DD-YYYY');
