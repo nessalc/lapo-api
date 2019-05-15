@@ -11,12 +11,13 @@ You're gonna need node.js; this was written on v8.11.3. You'll also need Python 
 1. Make a fork
 2. Clone to your machine
 3. CD into the folder
-4. run ```npm install```
-5. run ```pip install -r requirements.txt```
-6. run ```npm start``` or ```nodemon start``` if you have nodemon installed.
-7. Write code
-8. Upload to your fork
-9. Submit a pull request
+4. Fill out the .env file (use .env_example as a guideline)
+5. run ```npm install```
+6. run ```pip install -r requirements.txt```
+7. run ```npm start``` or ```nodemon start``` if you have nodemon installed.
+8. Write code
+9. Upload to your fork
+10. Submit a pull request
 
 If you have access to the server you can deploy the code yourself:
 
@@ -57,7 +58,7 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
         * current constellation
         * rise time/rise azimuth
         * transit time/transit altitude
-        * set time/set azimuth, 
+        * set time/set azimuth,
         * Valid parameters (defaults):
             * `lat` (37.62218579135644)
             * `lon` (-97.62695789337158)
@@ -78,7 +79,7 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
         * constellation
         * rise time/rise azimuth
         * transit time/transit altitude
-        * set time/set azimuth, 
+        * set time/set azimuth,
         * Valid parameters (defaults):
             * `lat` (37.62218579135644)
             * `lon` (-97.62695789337158)
