@@ -605,4 +605,9 @@ router.get('/forecast', async function(req, res, next) {
   res.json(reply);
 });
 
+router.get('/mars-weather', async function(req, res, next) {
+  const reply = await helpers.getMarsWeather();
+  res.json(reply);
+});
+
 module.exports = router;
