@@ -119,5 +119,6 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
             * `tz` (America/Chicago)
             * `start` (now)
             * `end` (now)
+    * GET `/mars-weather` -- return weather data from the Curiosity rover
 
 ***One more note:*** the data provided at these endpoints is probably more than enough to get a hobbyist started, to at least get an object of interest in a finder scope. And while these numbers are at least mostly accurate, don't try to steer Hubble or launch a rocket to Neptune with them.
