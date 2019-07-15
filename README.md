@@ -41,7 +41,7 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
     * ***Parameter Notes:***
         * `lat` is latitude in degrees, positive for north, negative for south. DMS format is not accepted--must be in decimal degrees (e.g. 37.6222 rather than 37°37'19.8688")
         * `lon` is longitude in degrees, positive for east, negative for west. DMS format is not accepted--must be in decimal degrees (e.g. -97.6270 rather than -97°37'37.0484")
-        * `dt` is a timestamp in a very particular format: YYYY-MM-DDThh:mm:ss±hhmm. YYYY is the year; negative values are acceptable but behavior may not be predictable. MM and DD are the month and day, respectively, and must be entered as two digit values. hh is the hour in a 24-hour format, and must be entered with two digits. mm and ss are minutes and seconds, respectively. Decimals may be added to seconds to increase precision, but output will only be to the whole second. ±hhmm specifies the timezone offset of the timestamp. This must be entered with a sign (+ or -) and four digits: the hours and minutes each as two digits. An alternative is the letter Z, denoting UTC. All parameters are required at this time.
+        * `dt` (`start` and `end`, also) is a timestamp in a very particular format: YYYY-MM-DDThh:mm:ss±hhmm. YYYY is the year; negative values are acceptable but behavior may not be predictable. MM and DD are the month and day, respectively, and must be entered as two digit values. hh is the hour in a 24-hour format, and must be entered with two digits. mm and ss are minutes and seconds, respectively. Decimals may be added to seconds to increase precision, but output will only be to the whole second. ±hhmm specifies the timezone offset of the timestamp. This must be entered with a sign (+ or -) and four digits: the hours and minutes each as two digits. An alternative is the letter Z, denoting UTC. All parameters are required at this time.
         * `tz` is a timezone in the format of the Olson database for the output of the query. Default is 'America/Chicago'. Currently all formats are allowed, but in the future only canonical names and aliases may be accepted (ability to recognize deprecated names will be removed).
         * Parameters are entered as a standard query string, e.g. `/whatsup/?key1=value1&key2=value2`. Order among different keys is unimportant. If a key is dupicated, only the *last* value associated with a key will be utilized. If a value is inappropriate for the type, it will be ignored and the default will be used. The program does its best to decide what you meant, but typos can still cause unexpected issues.
     * GET `/planets` -- returns planets that are visible right now
@@ -120,6 +120,31 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
             * `start` (now)
             * `end` (now)
     * GET `/mars-weather` -- return weather data from the Curiosity rover
+    * GET `/iss` -- return current position and velocity of the International Space Station
+        * ***credit to [Where the ISS At?](https://wheretheiss.at/) for this data***
+        * Valid parameters (defaults):
+            * `tz` (America/Chicago)
+            * `dt` (now)
+    * GET `/iss-passes` -- return details of future visible ISS Passes:
+        * ***credit to [N2YO](https://www.n2yo.com/) for this data***
+        * start azimuth
+        * start azimuth compass point
+        * start elevation
+        * start timestamp (UTC & local)
+        * max azimuth
+        * max azimuth compass point
+        * max elevation
+        * max timestamp (UTC & local)
+        * end azimuth
+        * end azimuth compass point
+        * end elevation
+        * end timestamp (UTC & local)
+        * magnitude
+        * duration (in seconds)
+        * Valid parameters (defaults)
+            * `lat` (37.62218579135644)
+            * `lon` (-97.62695789337158)
+            * `tz` (America/Chicago)
     * GET `/neo` -- return information on near-earth objects over the next seven days
         * ***credit to [NASA](https://www.nasa.gov) for this data***
         * ID
