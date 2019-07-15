@@ -637,8 +637,8 @@ router.get('/mars-weather', async function(req, res, next) {
 
 /* neo
 
-Returns an extensive JSON object of near earth objects for the next seven days,
-sorted by the distance from Earth on each of those days.
+Returns a JSON object of near earth objects for the next seven days, sorted
+by the distance from Earth of each object on each of those days.
 */
 router.get('/neo', async function(req, res, next) {
   const qs = helpers.parseQueryString(req.query);
