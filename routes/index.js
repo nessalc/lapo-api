@@ -115,6 +115,7 @@ router.get('/planets', async function(req, res, next) {
     res.json(data);
   }
 });
+
 /* planets 2
 
 Returns a structure containing the following data on *all* the planets:
@@ -237,6 +238,7 @@ router.get('/sun', function(req, res, next) {
       .format('h:mma z');
   res.json(response);
 });
+
 /* sun2
 
 Returns a structure containing the following data on the sun:
@@ -354,6 +356,7 @@ router.get('/moon', function(req, res, next) {
   }
   res.json(response);
 });
+
 /* moon2
 
 Returns a structure containing the following data on the moon:
@@ -426,24 +429,27 @@ router.get('/events', async function(req, res, next) {
   const key = process.env.GoogleCalendarAPIKey;
   const calendarId = process.env.GoogleCalendarId;
   const data = await getEvents(calendarId, key);
+  try {
+    const events = data.items;
+    const eventsForDisplay = [];
 
-  const events = data.items;
-  const eventsForDisplay = [];
+    events.forEach(function(event) {
+      const startDate = new Date(event.start.dateTime).toString();
+      const endDate = new Date(event.end.dateTime).toString();
+      const eventStruct = {
+        summary: event.summary,
+        description: event.description,
+        startTime: startDate,
+        endTime: endDate,
+        location: event.location,
+      };
+      eventsForDisplay.push(eventStruct);
+    });
 
-  events.forEach(function(event) {
-    const startDate = new Date(event.start.dateTime).toString();
-    const endDate = new Date(event.end.dateTime).toString();
-    const eventStruct = {
-      summary: event.summary,
-      description: event.description,
-      startTime: startDate,
-      endTime: endDate,
-      location: event.location,
-    };
-    eventsForDisplay.push(eventStruct);
-  });
-
-  res.json(eventsForDisplay);
+    res.json(eventsForDisplay);
+  } catch (e) {
+    console.error(e.name, e.message);
+  }
 });
 
 /* schedule
@@ -516,6 +522,7 @@ router.get('/whatsup', async function(req, res, next) {
   const result = await helpers.pythonCall(data);
   res.json(result);
 });
+
 /* whatsup-next
 
 Returns a list of objects that will be in the sky during the upcoming open

@@ -45,6 +45,7 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
         * `tz` is a timezone in the format of the Olson database for the output of the query. Default is 'America/Chicago'. Currently all formats are allowed, but in the future only canonical names and aliases may be accepted (ability to recognize deprecated names will be removed).
         * Parameters are entered as a standard query string, e.g. `/whatsup/?key1=value1&key2=value2`. Order among different keys is unimportant. If a key is dupicated, only the *last* value associated with a key will be utilized. If a value is inappropriate for the type, it will be ignored and the default will be used. The program does its best to decide what you meant, but typos can still cause unexpected issues.
     * GET `/planets` -- returns planets that are visible right now
+        * ***credit to [astropical](https://astropical.space/) for this data***
         * Valid parameters (defaults):
             * `lat` (37.62218579135644)
             * `lon` (-97.62695789337158)
@@ -119,7 +120,53 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
             * `tz` (America/Chicago)
             * `start` (now)
             * `end` (now)
+    * GET `/weather` -- return weather data for Earth at the given location
+        * ***credit to [OpenWeather](https://openweathermap.org/) for this data***
+        * datetime of forecast data
+        * temp (°C, °F, "feels like")
+            * min (°C, °F)
+            * max (°C, °F)
+        * ground level pressure (mBar/hPa)
+        * humidity (%)
+        * weather
+            * description
+            * long description
+            * iconurl
+        * wind
+            * speed (m/s, mph)
+            * direction
+        * visibility (km, mi)
+        * clouds (%)
+        * rain (if applicable)
+        * snow (if applicable)
+        * Valid parameters (defaults):
+            * `lat` (37.62218579135644)
+            * `lon` (-97.62695789337158)
+            * `tz` (America/Chicago)
+    * GET `/forecast` -- return weather forecast data for Earth at the given location in 3 hour intervals for the next 5 days
+        * datetime of forecast data
+        * temp (°C, °F, "feels like")
+            * min (°C, °F)
+            * max (°C, °F)
+        * sea level adjusted pressure (mBar/hPa)
+        * ground level pressure (mBar/hPa)
+        * humidity (%)
+        * weather
+            * description
+            * long description
+            * iconurl
+        * wind
+            * speed (m/s, mph)
+            * direction
+        * clouds (%)
+        * rain (if applicable)
+        * snow (if applicable)
+        * Valid parameters (defaults):
+            * `lat` (37.62218579135644)
+            * `lon` (-97.62695789337158)
+            * `tz` (America/Chicago)
     * GET `/mars-weather` -- return weather data from the Curiosity rover
+        * ***credit to [Apollorion](https://apollorion.com/) for this data***
     * GET `/iss` -- return current position and velocity of the International Space Station
         * ***credit to [Where the ISS At?](https://wheretheiss.at/) for this data***
         * Valid parameters (defaults):
