@@ -445,7 +445,8 @@ minions
 */
 router.get('/schedule', function(req, res, next) {
   const upcomingSunday = new Date();
-  upcomingSunday.setDate(upcomingSunday.getDate() + (0 + 7 - upcomingSunday.getDay()) % 7);
+  upcomingSunday.setDate(upcomingSunday.getDate() +
+    (0 + 7 - upcomingSunday.getDay()) % 7);
   // let upcomingSundayFormatted = moment(upcomingSunday).format('MM-DD-YYYY');
   const relevantFriday = moment(upcomingSunday).subtract(2, 'days');
   const relevantFridayFormatted = moment(relevantFriday).format('MM-DD-YYYY');
@@ -607,6 +608,58 @@ router.get('/forecast', async function(req, res, next) {
 
 router.get('/mars-weather', async function(req, res, next) {
   const reply = await helpers.getMarsWeather();
+  res.json(reply);
+});
+
+/* iss
+
+Returns current ISS position, altitude, velocity, and visibility.
+
+Accepts the following parameter(s) (see README for details):
+- dt
+- tz
+*/
+router.get('/iss', async function(req, res, next) {
+  const qs=helpers.parseQueryString(req.query);
+  const tz = qs.tz || 'America/Chicago';
+  const timestamp = moment(qs.dt);
+  const reply = await helpers.getObjectPosition(25544, timestamp, tz);
+  res.json(reply);
+});
+
+/* iss-passes
+
+Returns details of future visible ISS Passes:
+- start azimuth
+- start azimuth compass point
+- start elevation
+- start timestamp (UTC & local)
+- max azimuth
+- max azimuth compass point
+- max elevation
+- max timestamp (UTC & local)
+- end azimuth
+- end azimuth compass point
+- end elevation
+- end timestamp (UTC & local)
+- magnitude
+- duration (in seconds)
+
+Accepts the following parameter(s) (see README for details):
+- lat
+- lon
+- tz
+*/
+router.get('/iss-passes', async function(req, res, next) {
+  const qs=helpers.parseQueryString(req.query);
+  const lat = parseFloat(qs.lat) || 37.62218579135644;
+  const lon = parseFloat(qs.lon) || -97.62695789337158;
+  const elev = await helpers.getElevation(lat,
+      lon,
+      process.env.GooglePlacesAPIKey);
+  const tz = qs.tz || 'America/Chicago';
+  const key = process.env.N2YOAPIKey;
+  const reply = await helpers.getObjectNextPass(25544, lat, lon, elev, tz, key);
   res.json(reply);
 });
 
