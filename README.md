@@ -120,5 +120,23 @@ If you have other any questions, you can reach out at sduncan@lakeafton.com
             * `start` (now)
             * `end` (now)
     * GET `/mars-weather` -- return weather data from the Curiosity rover
+    * GET `/neo` -- return information on near-earth objects over the next seven days
+        * ***credit to [NASA](https://www.nasa.gov) for this data***
+        * ID
+        * NEO reference ID
+        * name
+        * NASA JPL URL
+        * absolute magnitude (H)
+        * estimated diameter (km, m, mi, ft)
+            * min
+            * max
+        * close approach data
+            * date
+            * datetime (local)
+            * relative velocity (kps, kph, mph)
+            * miss distance (au, ld, km, mi)
+            * orbiting body
+        * Valid parameters (defaults):
+            * `tz` (America/Chicago)
 
 ***One more note:*** the data provided at these endpoints is probably more than enough to get a hobbyist started, to at least get an object of interest in a finder scope. And while these numbers are at least mostly accurate, don't try to steer Hubble or launch a rocket to Neptune with them.
