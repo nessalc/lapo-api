@@ -22,10 +22,11 @@ router.get('/', function(req, res, next) {
 Returns hours in a "pretty-print" format, as well as an open and close time
 */
 router.get('/hours', function(req, res, next) {
-  // need upcoming Friday if current is not Friday or Saturday
+  // need upcoming Saturday if current date is not Saturday
+  const day_anchor=6;
   const currentTime = new Date();
-  if (currentTime.getDay()<5) {
-    currentTime.setDate(currentTime.getDate()+(5-currentTime.getDay()));
+  if (currentTime.getDay()<day_anchor) {
+    currentTime.setDate(currentTime.getDate()+(day_anchor-currentTime.getDay()));
   }
   const month = currentTime.getMonth() + 1;
   const response = {
