@@ -23,10 +23,10 @@ Returns hours in a "pretty-print" format, as well as an open and close time
 */
 router.get('/hours', function(req, res, next) {
   // need upcoming Saturday if current date is not Saturday
-  const day_anchor=6;
+  const dayAnchor=6;
   const currentTime = new Date();
-  if (currentTime.getDay()<day_anchor) {
-    currentTime.setDate(currentTime.getDate()+(day_anchor-currentTime.getDay()));
+  if (currentTime.getDay()<dayAnchor) {
+    currentTime.setDate(currentTime.getDate()+(dayAnchor-currentTime.getDay()));
   }
   const month = currentTime.getMonth() + 1;
   const response = {
@@ -159,8 +159,8 @@ router.get('/planets2', async function(req, res, next) {
       process.env.GooglePlacesAPIKey
   );
   const weatherData = await helpers.getWeather(lat, lon, key);
-  const pressure = weatherData.main.pressure;
-  const temp = weatherData.main.temp.celsius;
+  const pressure = weatherData.groundLevelPressure;
+  const temp = weatherData.temperature.celsius;
   const data = {
     lat: lat,
     lon: lon,
@@ -289,8 +289,8 @@ router.get('/sun2', async function(req, res, next) {
       process.env.GooglePlacesAPIKey
   );
   const weatherData = await helpers.getWeather(lat, lon, key);
-  const pressure = weatherData.main.pressure;
-  const temp = weatherData.main.temp.celsius;
+  const pressure = weatherData.groundLevelPressure;
+  const temp = weatherData.temperature.celsius;
   const data = {
     lat: lat,
     lon: lon,
@@ -406,8 +406,8 @@ router.get('/moon2', async function(req, res, next) {
       process.env.GooglePlacesAPIKey
   );
   const weatherData = await helpers.getWeather(lat, lon, key);
-  const pressure = weatherData.main.pressure;
-  const temp = weatherData.main.temp.celsius;
+  const pressure = weatherData.groundLevelPressure;
+  const temp = weatherData.temperature.celsius;
   const data = {
     lat: lat,
     lon: lon,
@@ -505,8 +505,8 @@ router.get('/whatsup', async function(req, res, next) {
     end = start;
   }
   const weatherData = await helpers.getWeather(lat, lon, key);
-  const pressure = weatherData.main.pressure;
-  const temp = weatherData.main.temp.celsius;
+  const pressure = weatherData.groundLevelPressure;
+  const temp = weatherData.temperature.celsius;
   const data = {
     lat: lat,
     lon: lon,
